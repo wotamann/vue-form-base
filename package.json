@@ -1,0 +1,28 @@
+{
+  "name": "vue-form-base",
+  "version": "0.0.1",
+  "description": "configurable schema-based form generator using Vuex for reactive result. Made for Vue JS",
+  "main": "FormBase.vue",
+  "scripts": {
+    "test": "npm run unit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wotamann/vue-form-base.git"
+  },
+  "keywords": [
+    "vue js",
+    "vuex",
+    "formular",
+    "generator",
+    "schema",
+    "select",
+    "multiselect"
+  ],
+  "author": "woko@aon.at",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wotamann/vue-form-base/issues"
+  },
+  "homepage": "https://github.com/wotamann/vue-form-base#readme"
+}
