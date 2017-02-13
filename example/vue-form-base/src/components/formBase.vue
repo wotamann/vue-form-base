@@ -18,8 +18,7 @@
 
       <li class="collection-item" :class="getItemClassName(obj)" v-for="(obj, index) in flatCombinedArraySorted" v-if="obj.schema.hidden !== true">
         
-        <slot name="item"></slot>
-        <slot :name="getTypeClassName(obj)"></slot>
+        <!-- IMPORTANT: duplicate slots for each item or each type are not allowed in v-for loop -->
         <slot :name="getKeyClassName(obj)"></slot>
         
         <div class="label">
@@ -168,7 +167,6 @@
     
     methods:{ 
      
-    
       makeKeyUnique(obj, idx=''){
         // needed to avoid conflict with same attr[id] when displaying more than one editor-base component 
         return obj.key + makeKeyUniqueDelimiter + this.keyIndividualizer + idx
@@ -212,7 +210,7 @@
       },
 
       noValidate(value, obj, data, schema){
-         isFunction(obj.schema.noValidate) ? obj.schema.noValidate(value, obj, data, schema) : obj.schema.error = null          
+         isFunction(obj.schema.noValidate) ? obj.schema.noValidate(value, obj, data, schema) : obj.schema && (obj.schema.error = null)          
       },
 
       validate(msg, obj, data, schema, validity){
@@ -303,62 +301,52 @@
         })
       },
 
-      getSanitizedSchema(sch, i){
-        let sanitizedSchema = (typeof sch[i] === 'string') ? { type: sch[i] } : sch[i] // shorthand definition of type ->  schema:{ pw:'password' }
-        if (!sanitizedSchema.type) sanitizedSchema.type = 'text'  // no type defined, then take default type:'text'    
-        return sanitizedSchema;
-    },
-
-      flattenObjects(obj,sch) {
-        let object = {}
+      flattenObjects(dat,sch) {
+        let data = {}
         let schema = {}
       
-        Object.keys(obj).forEach( i => {
-          if ( !Array.isArray(obj[i]) && typeof obj[i] === 'object' && obj[i]){
-            let {object: flatObject, schema: flatSchema } = this.flattenObjects(obj[i], sch[i])
-            Object.keys(flatObject).forEach(ii => {
-              object[i + pathDelimiter + ii] = flatObject[ii]
+        Object.keys(dat).forEach( i => {
+          if ( !Array.isArray(dat[i]) && typeof dat[i] === 'object' && dat[i]){
+            let {data: flatData, schema: flatSchema } = this.flattenObjects(dat[i], sch[i])
+            Object.keys(flatData).forEach(ii => {
+              data[i + pathDelimiter + ii] = flatData[ii]
               schema[i + pathDelimiter + ii] = flatSchema[ii]
             })
           } else { 
-            object[i] = obj[i]
-            schema[i] = this.getSanitizedSchema(sch, i)        
+            data[i] = dat[i]
+            schema[i] = sch[i]         
           }
         })
    
-        return {object, schema}
+        return {data, schema}
       },
 
-      combineObjectsToArray( {object, schema} ){
+      combineObjectsToArray( {data, schema} ){
 
         let arr = [];
+        Object.keys(data).forEach(key => {  
+          
+          // if schema[key] is null, undefined, string or no plain object then skip           
+          if (!isPlainObject(schema[key]) ) {
+            console.warn(`Property '${key}' in Data has no correspondingly Definition in Schema and will be ignored!` )
+            return 
+          }  
+          arr.push( {key, value:data[key], schema:schema[key]} )
         
-        Object.keys(object).forEach(key => {  
-          // if no schema for object-key then skip           
-          if (!schema[key]) return  
-          arr.push( {key:key, value:object[key], schema:schema[key]} )
         })
           
         return arr
       },
 
-      flattenAndCombineToArray (object,schema) {
+      flattenAndCombineToArray (data,schema) {
         
         // flatten nested structure of two objects 'data' & 'schema'  
-        let flattenedObjects = this.flattenObjects(object, schema)
+        let flattenedObjects = this.flattenObjects(data, schema)
         
         // ... and combine them to an array
         return this.combineObjectsToArray(flattenedObjects)
         
       }
-
-    },
-    created(){
-      
-      console.log('data', this.data, )
-      console.log('schema', this.schema, )
-      console.log('dataStateName', this.dataStateName)
-      console.log('schemaStateName', this.schemaStateName)
 
     },
 
@@ -369,13 +357,12 @@
       if (!this.schema || !isPlainObject(this.schema) ) throw `Check '<form-base :schema="..." >'! Property 'schema' seem to be not an object or undefined!`
       if (!this.dataStateName || !isString(this.dataStateName) ) throw `Check '<form-base :dataStateName="..." >'! Property 'dataStateName' seem to be not a string or undefined!`
       if ( this.schemaStateName && !isString(this.schemaStateName) ) throw `Check '<form-base :schemaStateName="..." >'! Property 'schemaStateName' seem to be not a string!`
-      
+
       // decouple state dataState/schemaState from prop data/schema
       this.dataState = cloneDeep(this.data) 
       this.schemaState = cloneDeep(this.schema) 
 
-      // make flat array which combines deep nested data & schema object
-      // flatCombinedArray is array used by v-for for displaying data
+      // make flat array which combines data & schema object for displaying data
       this.flatCombinedArray = this.flattenAndCombineToArray(this.dataState, this.schemaState)
         
     } 

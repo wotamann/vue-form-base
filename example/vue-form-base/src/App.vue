@@ -97,17 +97,17 @@
     <hr>
     
     <div class="row">
-      <div class="col s6">
+      <div class="col s12">
       
         <!--use vue-form-base component-->
         <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
           <!--using slots-->
-          <h5>Form</h5>
+          <h5>test</h5>
           <div slot="nested-selections-mselect-key" class="card">MULTI SELECT SLOT</div>
         </form-base>
       
       </div>
-      <div class="col s6">
+      <div class="col s0">
       
         <!--use vue-form-base component different ID & CSS -->
         <form-base id="right" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema"/>
@@ -132,7 +132,9 @@ export default {
     return {  
    
       data:{
-
+        a: null,
+        b: null,
+        c: null,
         user: "JASMIN",         
         password: '12345',
         nested:{
@@ -192,6 +194,10 @@ export default {
               noValidate: function,     function( value, obj, state, schema ) { use value, obj.key, obj.value, obj.schema to handle novalidation }
           }                    
         */ 
+        a:{ type:'text'},
+        b:{ type:'text'},
+        dc:{ type:'text'},
+        
         user: { 
           // default: type:'text', 
           label:`User (convert to Uppercase, Try 'HIDE' to hide radio-field)`,
