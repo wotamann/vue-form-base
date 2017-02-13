@@ -4,16 +4,23 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
+  
   state: {
-    data:null,      // vuex state object holding the edited data 
-    schema:null     // vuex state object holding the possible modified schema
-  },
-  mutations: {
-  setDataState: (state, val) => { state[this.dataStateName] = val },
-  setSchemaState: (state, val) => { state[this.schemaStateName] = val }
+
+    // <form-base data-state-name="stateDataForm" />
+    // stateDataForm: null     
+
+    data:null,    // vuex state object holding the edited data 
+
+    // <form-base schema-state-name="stateSchemaForm" />     
+    // stateSchemaForm: null     
+    
+    schema:null   // vuex state object holding the possible modified schema
+  
   }
 
 });
+
 import App from './App.vue'
 
 new Vue({

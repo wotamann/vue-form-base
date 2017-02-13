@@ -77,6 +77,7 @@
   
   /* set individual css for key mselect */
   #form-base .item.nested-selections-mselect-key select{ height:8rem; background-color: yellowgreen; color:white}
+  #form-base .item.select-type select{ height:3rem; background-color: yellowgreen; color:lightgoldenrodyellow}
   
   /* set individual css for key mselect */
   #form-base .item.fileselector-key .button { background-color: yellowgreen; color:white}
@@ -97,17 +98,17 @@
     <hr>
     
     <div class="row">
-      <div class="col s12">
+      <div class="col s7">
       
         <!--use vue-form-base component-->
         <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
-          <!--using slots-->
-          <h5>test</h5>
-          <div slot="nested-selections-mselect-key" class="card">MULTI SELECT SLOT</div>
+          <!--using named slots-->
+          <div slot="user-key" class="card green white-text collection-item">SLOT for USER-KEY</div>
+          <div slot="nested-selections-mselect-key" class="card">SLOT for MSELECT-KEY</div>
         </form-base>
       
       </div>
-      <div class="col s0">
+      <div class="col s5">
       
         <!--use vue-form-base component different ID & CSS -->
         <form-base id="right" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema"/>
@@ -132,9 +133,6 @@ export default {
     return {  
    
       data:{
-        a: null,
-        b: null,
-        c: null,
         user: "JASMIN",         
         password: '12345',
         nested:{
@@ -143,7 +141,7 @@ export default {
           color: '#bcdf2f',
           selections: {
             select: 'Resilience',
-            mselect: null // 'Resilience' or  ['Yoga', 'Resilience'],
+            mselect: ['Yoga', 'Resilience'],
           },
         },
         fileselector:'green-tea.jpg'
@@ -194,21 +192,19 @@ export default {
               noValidate: function,     function( value, obj, state, schema ) { use value, obj.key, obj.value, obj.schema to handle novalidation }
           }                    
         */ 
-        a:{ type:'text'},
-        b:{ type:'text'},
-        dc:{ type:'text'},
-        
+       
         user: { 
-          // default: type:'text', 
-          label:`User (convert to Uppercase, Try 'HIDE' to hide radio-field)`,
+          type:'text', 
+          label:`User (convert to Uppercase, Try 'HIDE' to hide password, value is required)`,
           validate:true,
           required:true, 
           // mapGet: v => v.toUpperCase(),
-          mapSet: (val, obj, data, schema) => { schema.nested.radio.hidden = val.toUpperCase() === 'HIDE'; return val.toUpperCase()}, 
+          mapSet: (val, obj, data, schema) => { schema.password.hidden = val.toUpperCase() === 'HIDE'; return val.toUpperCase()}, 
         },
         password:{
           type:'password', 
-          label:'Password (only [0-9], invalidate own CSS & logs msg to console )', 
+          css: 'card amber', 
+          label:'Password (only [0-9], invalidate with individual CSS & logs error to console and to user field )', 
           required:true, 
           pattern:'[0-9]*',
           // validate undefined   // no validation 
@@ -220,14 +216,14 @@ export default {
 
         nested:{
           checkbox: { type:'checkbox', true:'Yes!', false:'Oh No!'},
-          radio: { type:'radio', hidden:false, options:['Resilience','Green Tea','Yoga','Chicken Curry','Massage']}, 
+          radio: { type:'radio', hidden:false, options:['Resilience','Green Tea','Yoga','Curry']}, 
           color:{ type:'color'}, 
           selections: {
-            select: { type:'select', label:'Select One', options:['Resilience','Green-Tea','Yoga','Chicken Curry']},
-            mselect: { type:'multiselect', label:'Select Some', required:true,  validate:true, options:['Resilience','Green-Tea','Yoga','Chicken Curry']},
+            select: { type:'select', label:'Select One', options:['Resilience','Green Tea','Yoga','Curry']},
+            mselect: { type:'multiselect', label:'Select Some', required:true,  validate:true, options:['Resilience','Green Tea','Yoga','Curry']},
           }, 
         },
-        fileselector:{ type:'file', multiple:true, label:'Get Tea!' }  
+        fileselector:{ type:'file', multiple:true, label:'Get Teas!' }  
 
       },
 

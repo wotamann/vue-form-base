@@ -14,7 +14,8 @@
     <slot></slot>
     
     <ul class="collection"> 
-        <slot name="collection"></slot>
+
+      <slot name="collection"></slot>
 
       <li class="collection-item" :class="getItemClassName(obj)" v-for="(obj, index) in flatCombinedArraySorted" v-if="obj.schema.hidden !== true">
         
@@ -144,22 +145,15 @@
       flatCombinedArraySorted(){ return orderBy(this.flatCombinedArray, ['schema.order'], [sortDirection])  },
       
       dataState: { 
-        get: function(){  
-          this.updateArrayFromState(this.flatCombinedArray, this.$store.state[this.dataStateName]); 
-          return this.$store.state[this.dataStateName] || {}         
+        get(){ this.updateArrayFromState(this.flatCombinedArray, this.$store.state[this.dataStateName]); 
+                return this.$store.state[this.dataStateName] || {}         
         }, 
-        set: function(val){ 
-          this.$store.state[this.dataStateName] = val 
-        }      
+        set(val){ this.$store.state[this.dataStateName] = val }      
       },
      
       schemaState: { 
-        get: function(){ 
-          return this.schemaStateName ? this.$store.state[this.schemaStateName] || {} : this.noSchemaStateName
-        }, 
-        set: function(val){ 
-          this.schemaStateName ? this.$store.state[this.schemaStateName] = val : this.noSchemaStateName = val
-        }      
+        get(){ return this.schemaStateName ? this.$store.state[this.schemaStateName] || {} : this.noSchemaStateName }, 
+        set(val){ this.schemaStateName ? this.$store.state[this.schemaStateName] = val : this.noSchemaStateName = val }      
       }      
 
 
@@ -190,18 +184,23 @@
       },
       
       getKeyClassName(obj){
-        // get key specific class name by replacing '.' with '-' and appending '-key' 
+        // get KEY specific class name by replacing '.' with '-' and appending '-key'  -> 'adress-city-key' 
         return this.redoMakeKeyUnique(obj.key).replace(/\./g,'-') + keyClassAppendix
       },
 
       getTypeClassName(obj){        
-        // get type specific class name by appending '-type' 
+        // get TYPE specific class name by appending '-type' -> 'checkbox-type'
         return obj.schema.type + typeClassAppendix
       },
 
+      getCssClassName(obj){        
+        // get a class from schema.css ->  schema:{ user:{ css:'RED', ... } ... }
+        return obj.schema.css ? obj.schema.css : ''
+      },
+
       getItemClassName(obj){
-        // each item get a class 'item' , a class type-item like 'select-item' and a class key-item like 'adress.city-item'       
-        return `item ${this.getTypeClassName(obj)} ${this.getKeyClassName(obj)}`
+        // each item gets a class 'item', a class 'item-type' like 'checkbox-type', a class 'item-key' like 'adress-city-key' and a class from schema.css      
+        return `item ${this.getTypeClassName(obj)} ${this.getKeyClassName(obj)} ${this.getCssClassName(obj)}`
       },
 
       getValidationMessage(target){
@@ -214,6 +213,7 @@
       },
 
       validate(msg, obj, data, schema, validity){
+        if (!obj.schema.validate) return 
         isFunction(obj.schema.validate) ? obj.schema.validate(msg, obj, data, schema, validity) : obj.schema.error = msg          
       },
 
@@ -236,11 +236,9 @@
       setValue( {target}, obj){
         
         // execute validate(validationMessage, obj, data, schema, validity) if 'validate' defined and validationMessage is available  
-        if ( target.validationMessage ) { 
-          if (obj.schema.validate) this.validate( this.getValidationMessage(target) , obj, this.dataState, this.schemaState, target.validity)
-        } else {
-          this.noValidate(value, obj, this.dataState, this.schemaState)
-        } 
+        target.validationMessage 
+          ? this.validate( this.getValidationMessage(target) , obj, this.dataState, this.schemaState, target.validity)
+          : this.noValidate(value, obj, this.dataState, this.schemaState);
 
         // get key from event.target, handles 
         let key = target ? (target.list ? target.list.id : (target.type === 'radio' ? target.parentElement.id :target.id)) : null
@@ -327,15 +325,20 @@
         Object.keys(data).forEach(key => {  
           
           // if schema[key] is null, undefined, string or no plain object then skip           
-          if (!isPlainObject(schema[key]) ) {
-            console.warn(`Property '${key}' in Data has no correspondingly Definition in Schema and will be ignored!` )
+          if (!schema[key] ) {
+            console.warn(`Property '${key}' in Data has no correspondingly Schema Property and will be ignored!` )
             return 
           }  
+          if (!isPlainObject(schema[key]) ) {
+            console.warn(`Prop '${key}' must have a correspondingly Schema Prop with at least ${key}:{ type:'text'} as value.  Prop '${key}' will be ignored!` )
+            return 
+          }  
+
           arr.push( {key, value:data[key], schema:schema[key]} )
         
         })
-          
         return arr
+          
       },
 
       flattenAndCombineToArray (data,schema) {
@@ -352,7 +355,7 @@
 
     mounted(){        
 
-      // check necessary props 
+      // check existence of necessary props 
       if (!this.data || !isPlainObject(this.data) )  throw `Check '<form-base :data="..." >'! Property 'data' seem to be not an object or undefined!`
       if (!this.schema || !isPlainObject(this.schema) ) throw `Check '<form-base :schema="..." >'! Property 'schema' seem to be not an object or undefined!`
       if (!this.dataStateName || !isString(this.dataStateName) ) throw `Check '<form-base :dataStateName="..." >'! Property 'dataStateName' seem to be not a string or undefined!`
