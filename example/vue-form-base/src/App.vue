@@ -133,14 +133,33 @@ export default {
   data() {
     return {  
    
-      data:{
-        user: 'smith',
-        email: 'smith@online.com'     
-      },
-       schema:{    
-        user: { type:'text' },
-        email: { type:'email' }
-       },
+  
+    data:{ 
+      user: 'smith',
+      email:'smith', 
+      password: '12345ABCDEF',
+	  remember: 'undefined',
+      adress:{ 
+        city:'NY',
+		 
+      } 
+    },
+    
+    schema:{ 
+      
+		user: {type:'text', label:'User:', placeholder:'User...'  },
+		
+		email: {type:'email',label:'Email:', validate:true }, 
+		
+		password: {type:'password', label:'Password(Numbers only):', pattern:'^([0-9])*', validate:true },
+		
+		remember: {type:'checkbox', label:'Remember Me:', true:'Yes', false:'No' }, 	
+		
+		adress:{ 
+			city:{ type:'text', mapGet: v => v && v.toUpperCase() }
+  		} 
+    }, 
+
 
       datax:{
         user: "JASMIN",         
