@@ -15,7 +15,7 @@ Add global **Validation** to the form or validate only a single field. Use inlin
 Make complex data editable by **mapping** your incoming and outgoing data:  i.e. change dateformats, trim strings or join/split arrays for editing in a textfield. 
 
 Get a full reactive Result by using **Vuex**
-
+ 
 Installation
 ===
 
