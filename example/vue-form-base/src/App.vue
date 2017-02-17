@@ -98,7 +98,15 @@
     <hr>
     
     <div class="row">
-      <div class="col s7">
+      
+      <div class="col s12">
+      
+        <!--use vue-form-base component different ID & CSS -->
+        <form-base id="right" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema"/>
+      
+      </div>
+    
+      <div class="col s0">
       
         <!--use vue-form-base component-->
         <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
@@ -108,13 +116,6 @@
         </form-base>
       
       </div>
-      <div class="col s5">
-      
-        <!--use vue-form-base component different ID & CSS -->
-        <form-base id="right" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema"/>
-      
-      </div>
-    
     </div>
 
   </div>
@@ -122,7 +123,7 @@
 </template>
 
 <script>
-import FormBase from './components/formBase.vue'
+import FormBase from 'vue-form-base'
 import { cloneDeep, isString, isArray } from 'lodash'
 
 export default {
@@ -133,6 +134,15 @@ export default {
     return {  
    
       data:{
+        user: 'smith',
+        email: 'smith@online.com'     
+      },
+       schema:{    
+        user: { type:'text' },
+        email: { type:'email' }
+       },
+
+      datax:{
         user: "JASMIN",         
         password: '12345',
         nested:{
@@ -148,7 +158,7 @@ export default {
 
       },
 
-      schema:{    
+      schemaxx:{    
         // Schema Definition and available Properties
         /* 
           // recommended info https://www.wufoo.com/html5/
