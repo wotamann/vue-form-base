@@ -99,14 +99,8 @@
     
     <div class="row">
       
-      <div class="col s12">
-      
-        <!--use vue-form-base component different ID & CSS -->
-        <form-base id="right" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema"/>
-      
-      </div>
     
-      <div class="col s0">
+      <div class="col s12">
       
         <!--use vue-form-base component-->
         <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
@@ -116,6 +110,14 @@
         </form-base>
       
       </div>
+
+      <div class="col s0">      
+        <!--use vue-form-base component different ID & CSS -->
+        <form-base id="right" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema"/>
+      
+      </div>
+
+
     </div>
 
   </div>
@@ -134,35 +136,9 @@ export default {
     return {  
    
   
-    data:{ 
-      user: 'smith',
-      email:'smith', 
-      password: '12345ABCDEF',
-	  remember: 'undefined',
-      adress:{ 
-        city:'NY',
-		 
-      } 
-    },
-    
-    schema:{ 
-      
-		user: {type:'text', label:'User:', placeholder:'User...'  },
-		
-		email: {type:'email',label:'Email:', validate:true }, 
-		
-		password: {type:'password', label:'Password(Numbers only):', pattern:'^([0-9])*', validate:true },
-		
-		remember: {type:'checkbox', label:'Remember Me:', true:'Yes', false:'No' }, 	
-		
-		adress:{ 
-			city:{ type:'text', mapGet: v => v && v.toUpperCase() }
-  		} 
-    }, 
-
-
-      datax:{
-        user: "JASMIN",         
+      data:{
+        user: "smith",
+        email:'smith@online.com',          
         password: '12345',
         nested:{
           checkbox: 'untouched',
@@ -177,7 +153,7 @@ export default {
 
       },
 
-      schemaxx:{    
+      schema:{    
         // Schema Definition and available Properties
         /* 
           // recommended info https://www.wufoo.com/html5/
@@ -227,6 +203,7 @@ export default {
           label:`User (convert to Uppercase, Try 'HIDE' to hide password, value is required)`,
           validate:true,
           required:true, 
+          css:'red',
           // mapGet: v => v.toUpperCase(),
           mapSet: (val, obj, data, schema) => { schema.password.hidden = val.toUpperCase() === 'HIDE'; return val.toUpperCase()}, 
         },
@@ -243,6 +220,8 @@ export default {
           noValidate:(val, obj, data, schema) => { schema.user.error = null; obj.schema.error = null  }, 
         },        
 
+        email: {type:'email',label:'Email:', validate:true }, 
+		
         nested:{
           checkbox: { type:'checkbox', true:'Yes!', false:'Oh No!'},
           radio: { type:'radio', hidden:false, options:['Resilience','Green Tea','Yoga','Curry']}, 

@@ -199,6 +199,8 @@
       },
 
       getItemClassName(obj){
+
+        console.log(`item ${this.getTypeClassName(obj)} ${this.getKeyClassName(obj)} ${this.getCssClassName(obj)}`)
         // each item gets a class 'item', a class 'item-type' like 'checkbox-type', a class 'item-key' like 'adress-city-key' and a class from schema.css      
         return `item ${this.getTypeClassName(obj)} ${this.getKeyClassName(obj)} ${this.getCssClassName(obj)}`
       },

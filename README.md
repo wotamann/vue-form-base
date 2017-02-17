@@ -2,49 +2,116 @@
 Vue-Form-Base
 ===
 
-`vue-form-base` is a Vue-component and Form-Generator for editing plain or nested Javascript objects. 
+`vue-form-base` is a Vue-Component and Form-Generator for editing plain or nested Javascript objects. 
 
-You have to code a lot of forms for different objects, `vue-form-base` can simplify your job by creating new forms for each different kind of object. 
+You have to create a lot of different forms? `vue-form-base` can simplify your job by creating forms from JS-Objects. 
 
-Select from different input-types like Text, Password, Checkboxes, Radios, Select, Multiselect, Color, Files or a lot of other fields. In most cases the browser specific implemention of input-types is used. 
+Select from different input-types like Text, Password, Checkboxes, Radios, Select, Multiselect, Color, Files or a lot of other fields. In most cases the Browser specific implementation of **Input-Types** is used. [Some Informations to HTML5 input-types here](https://www.wufoo.com/html5/) 
 
-Simply provide a Schema containing same properties as your Data Model and define the fields you need.
+We use the [Materialize CSS](http://materializecss.com/) framework for styling. Input Fields have a clear design, but don't worry you can change your layout with CSS in a lot of ways. For more details see section **Style with CSS**
+
+Add global **Validation** to the form or validate only a single field. Use inline validation or write a new function for individuell validation. 
+
+Make complex data editable by **mapping** your incoming and outgoing data:  i.e. change dateformats, trim strings or join/split arrays for editing in a textfield. 
+
+Get a full reactive Result by using **Vuex**
+
+Installation
+===
+
+
+	npm install vue-form-base --save
+
+Using [single-file components](https://vuejs.org/v2/guide/single-file-components.html) with a .vue extension,
+
+import Formbase.vue File from your path
+
+	import FormBase from 'vue-form-base';  
+
+then register in 
+
+	export default {	
+		...
+		components:{     
+	      FormBase
+	  	}
+	}
+
+and use it in template
+	
+	<template>
+		<form-base :data="data" :schema="schema" data-state-name="datastate" />            
+    </template>
+
+
+
+
+**Minimalistic Example** 
+
+Use your existing Data Object 
+
+	data:{ 
+	      name: 'smith',
+	      email:'smith@online.com'
+	}
+
+define the following minimalistic Schema
+
+	 schema:{ 
+      name: {type:'text'},
+      email: {type:'email'}
+     
+    }
+
+and get this full editable Form
+	
+![Form Example](https://raw.githubusercontent.com/wotamann/vue-form-base/master/images/name1.JPG)
+
+
+**Edit using different Input-Types**
+
+
+
+
+A more realisitc Example providing a Schema containing same properties as your Data Model and define the fields you need.
+
+Your Data:
 
 
     data:{ 
       name: 'smith',
-      email:'smith@online.com', 
-      password: '12345',
+      email:'smith', 
+      password: '12345ABCDEF',
+	  remember: 'undefined',
       adress:{ 
-        city:'NY', 
+        city:'NY',
+		 
       } 
-    }
+    },
     
+Your Schema:
+
     schema:{ 
-      name: 'text',
-      email: {type:'email', validate:true, placeholder:'Email...' }, 
-      password: {type:'password', label:'Numbers only', pattern:'[0-9]*', validate: msg => console.log(msg) },
-      adress:{ 
-        city:{ type:'text', mapSet: v => v && v.toUpperCase() }
-      } 
+      
+		user: {type:'text', label:'User:', placeholder:'User...'  },
+		
+		email: {type:'email',label:'Email:', validate:true }, 
+		
+		password: {type:'password', label:'Password(Numbers only):', pattern:'[0-9]*', validate: msg => console.log(msg) },
+		
+		remember: {type:'checkbox', label:'Remember Me:', true:'Yes', false:'No' }, 	
+		
+		adress:{ 
+			city:{ type:'text', mapSet: v => v && v.toUpperCase() }
+  		} 
     }
 
+![](https://raw.githubusercontent.com/wotamann/vue-form-base/master/images/name2.JPG)
 
-We use the [Materialize CSS](http://materializecss.com/) framework for styling. Input Fields have a clear design, but don't worry you can change your layout with CSS in a lot of ways. For more details see *Style with CSS*
 
-Add global validation to the form or validate only a single field. Use inline validation or write a new function for individuell validation. 
-
-Make complex data editable and map your incoming and outgoing data:  i.e. change dateformats, trim strings or join/split arrays for editing in a textfield. 
-
-Features
-===
-
-* vue-component
-* edit plain or deep nested objects
-* support most of input types
-* full reactive result
-* configurable via Schema Defintion
-* configurable Style based on Materialize CSS 
+>IMPORTANT: 
+>
+>Properties from Data-Object, which doesn't exist in Schema-Object, are ignored.
 
 
 Reactive Result (Vuex)
@@ -56,23 +123,32 @@ Model `Data` und describing `Schema` flow as prop into the `Vue-Form-Base`. On t
 
 If you need to dynamically modify the internal Schema (for example if you want to change dynamically `schema.hidden` to show/hide one item depending from the input of another item) you can have reactive access to the modified Schema via Vuex Store `$store.state.schemastate`.
 
-Inside a vue file you can declare your component.
+Inside a single component .vue file you can use your component like this
 		
     <template>
-	   <form-base 
+
+	   	<form-base 
 		    :data="data" 
 		    :schema="schema" 
 		    data-state-name="datastate" 
 		    schema-state-name="schemastate" 
-	    />
+		>
+		</form-base>
+
     </template>
     
-**Access** the edited result via Vuex State
+**Access** the edited Result via Vuex State anywhere in your Project. 
+
 
     this.$store.state.datastate
 
 
-**Reset**  modified Data and modified Schema use following code inside the parent vue.file
+> IMPORTANT: 
+> 
+> 'Data' and 'Schema' passed as Prop becomes not mutated. 
+
+
+**Reset**  modified Data and modified Schema use following code inside the parent single component .vue file
 	
 	...
 	methods:{
@@ -84,14 +160,10 @@ Inside a vue file you can declare your component.
 	  },
 	  ...
 
-In common use cases without modified Schema **Reset** looks inside a **Vue-File** shortened  like this 
+In common use cases without modified Schema **Reset** can be shortened  
 
-	<template>
-      
-      {{$store.state.datastate}}
-
+	<template>      
       <form-base :data="data" :schema="schema" data-state-name="datastate" />
-	
     </template>
 	
 	<script>
@@ -109,57 +181,40 @@ In common use cases without modified Schema **Reset** looks inside a **Vue-File*
 	</script>
 
 
-	
-Declare a simple **Data- and Schema Object** in your vue-file   
 
-    ...
-    data() {
-	    return {  
-		   data:{ 
-			    name: 'Smith',
-			    password: '12345',
-			    email:'smith@online.com', 
-			    adress:{ 
-				    city:'NY', 
-				    street:'4th Av' // ignored no schema definition
-				    code:'12345', 
-			    } 
-		    },
-		    schema:{ 
-			    name: 'text', 
-			    password: 'password',
-			    email:'email',
-			    adress:{ 
-				    city:'text',
-				    code:'text'
-			    } 
-		    }
-		}
-	},
-	...
-
->INFO: Properties, which are in Schema-Object not defined, are in Data-Object ignored.
-
-Vue-Form-Base use the Materialize - CSS Framework. Input Fields have a simple design, but don't worry you can change the CSS-Layout in lot of ways. Change each type or each item separately.   
 
 Schema
 ===
 
 	 <form-base :schema="schema" ... />
 
-Schema is an object, which defines and controls the behavior of your form. Each Key in your data-object must reflect a key in the schema-object. 
+Schema is an object, which defines and controls the behavior of your form. Each Key in your schema-object must reflect a key in the data-object. 
 
-The  key could hold oly a string which represents the kind of type:
-	
 	schema:{
-		name1: 'text',
-		// is the same as
-		name2: { type:'text'},
+		user: { type:'text'}, // minimalistic definition of input-type 
+	}
+
+
+	// more 
+
+	validate = val => console.log(val);
+	mapSet  = val => val + '!'
+	schema:{
+		user: { 
+			type:'text', 
+			label:'User:', 
+			pattern:'([A-Z]*)', 
+			css:'blue', 
+			validate, 			// is the same as - validate:validate,
+			mapSet, 			// is the same as - mapSet:mapSet,
+			order:1 
+		},
+		... 
 	}
 	
-In common use cases the the value will be an object with several properties, to get different control over the behaviour of your input-field. 	
+In common use cases the the value will be another object with several properties, to get different control over the behaviour of your input-field. 	
 
-**Properties of Schema**
+**Properties in Schema**
 
   
 	schema:{ 
@@ -173,6 +228,7 @@ In common use cases the the value will be an object with several properties, to 
 		accept: string,         // type:'file' - limit files audio/*, image/*, .pdf
 		title: string,          // define your own validation message
 		error: string,          // preset/set inline error msg
+		css: string				// inject one or more classnames at item level 
 		
 		pattern: string         // regex to control input  
 		
@@ -212,77 +268,39 @@ In common use cases the the value will be an object with several properties, to 
       ...
 	
 
-**Schema-Property Order:**:
-
-The properties order in objects is not guaranteed in JavaScript, therefore you can define the order by seting property order with a number.
-	 
-    ...
-    schema:{ 
-      Second: { type:'text', order: 2 }
-      First: { type:'text', order: 1 }
-    }
-    ...
-
-**Schema-Property Type**:
-
-You can use most of HTML5 `<input>` type attributes like 
-
-    text, list, password, email, file, radio, checkbox,
-    number, range, date, time, week, month, url, select, multiselect 
-
-
-A description of HTML5 input types you can find here on [HTML5 Input Types](https://www.wufoo.com/html5)
-
-    schema:{ 
-	    
-	    name: 'text',   // same as  { type:'text' }
- 	    user: { type:'text', ... }, 
- 	    password: {type:'password', ... }
- 	    email: {type:'email', ... }
- 	    singleRole:{ type:'select', ... }, 
- 	    multiRole:{ type:'multiselect', ... } 
-      
-      }
-
-**Schema-Property all others TODO**:
-
-...
 
 
 
 
-
-----------
 Style with CSS 
 ---
 
-Customize your **vue-form-base** component using the following CSS-Classnames
-
+Customize your **vue-form-base** component using the following CSS-Classnames 
  
 
->  INFORMATION:  Don't use `<style scoped>` because scoped definitions
-> are inside the child component not accessable
+>  IMPORTANT:  
+>  Don't use `<style scoped>` in parents component, because scoped definitions
+>  are inside the child component not accessable
 
    
 **Form-ID**
 
-	#form-base is the default form-id. If you need different CSS for two or more forms then change default value by setting a different id for each component and use this new id  
+`#form-base` is the default form-id. If you need different CSS for two or more forms in the same parent component, then change default value by setting a different id for each component and use this new id  
 	
-	<form-base id="custom-id" ... />  
-  
-  and use
-	  
-	#custom-id .collection {...} 
+	/* default */
+	<form-base ... />  
+  	#form-base .collection {...}
+
+	/* individualize it */
+	<form-base id="my-custom-id" ... />  
+  	#my-custom-id .collection {...} 
 
 **General - Classnames**
 
 
-	  #form-base .collection {...}   
-	   
-	  #form-base .item {...}        
-
-	  // style inline-error messages 
-	  #form-base .error {...}       
+	  #form-base .collection {...}   	// style container for all items	   
+	  #form-base .item {...}     		// each key is represented, by an item   
+	  #form-base .error {...}        	// style inline-error messages 	  
 	  
   **Validate with Pseudoselectors**
 	  
@@ -290,67 +308,58 @@ Customize your **vue-form-base** component using the following CSS-Classnames
 	  #form-base .item input:valid { background-color: #dfd; }
 	  #form-base .item input:focus { background-color: #ffd; }          
   
-
 **Type - Classnames** 
 
-  You can use most of HTML5 input-types  `<input type="password" />` 
-	  
-	  [Some Informations to HTML5 input-types](https://www.wufoo.com/html5/)
-	 
-	  text,  password, email, select, multiselect, list, file, radio, checkbox,
-	  number, range, url, date, time, week, month
+  Style all items of a specific type, then use type-classnames. They start with a type ie. `password` appending `-type`. Then you have a classname `password-type` 
 
-Available are 'text', 'password', 'email', 'select', 'multiselect', 'list', 'file', 'radio', 'checkbox', 'number', 'range', 'url', 'date', 'time', 'week', 'month'
- 
-	  #form-base .item.text-type {...}
+	#form-base .text-type {...}  or  #form-base .item.text-type {...}
+
+You can use most of HTML5 input-types like `<input type="password" />`. [Some Informations to HTML5 input-types](https://www.wufoo.com/html5/)
+	  	   	
+  	
+	/*	
+		Available Types:
+		text,  password, email, select, multiselect, list, file, radio, 
+		checkbox, number, range, url, date, time, week, month 
+		
+		use class by appending -type  ->  .text-type 
+	*/
+
+	  #form-base .text-type { font-weight:500 }
 	  #form-base .item.select-type {...}
 	  #form-base .item.multiselect-type {...}
 	  #form-base .item.checkbox-type {...}
 	  
 **Make validate CSS for multiselect type**
+
+If you want to style select or multiselect types you have append `select` after the classname
  
-	 #form-base .item.multiselect-item input:invalid {...}
 	 #form-base .item.multiselect-item select { height:6rem }
 
 
   **Key - Classnames** 
-  Here you get direct access to each key in your data-object
+
+  Here you get direct access to each key in your Data-Object. If you want access deep nested keys youst must use a hyphen 
+
+	data{ user:{ adress:{ city:'',... } ... } ... }
  
-	  #form-base .item.lastname-key {...}
-	  // deep nested key
+access deep nested key 'city' with CSS
+
 	  #form-base .item.user-adress-city-key {...}    
 
-  **Validate CSS for individual key**
-  
-	  #form-base .item.adress-city-key input:invalid{...}
-	  #form-base .item.lastname-key input:focus{...}          
     
-    
-Dependencies
-===
-
-* Vue 2.0
-
-* Vuex
-
-* lodash
-
-* Materialize CSSs
 
 
-Installation
-===
-
-... TODO
 
 Example
 ===
 
 a)
-I created an example with vue-webapp template, checkout example directory in this repo and follow the readme.
+Use Example with vue-webapp template, checkout example directory in this repo and follow the readme.
+
 
 b) 
-Here is a working vue-file, integrate this in your vue-project. lodash and vuex must be installed
+Here is a working Vue-File, you can integrate this in your vue-project. Lodash and Vuex must be installed. In initial Vuex state definition `state.datastate ` must exist
 	
 	
     <style>
@@ -359,13 +368,8 @@ Here is a working vue-file, integrate this in your vue-project. lodash and vuex 
     </style>
     
 	<template>
-
       {{$store.state.datastate}}
-
-      <hr>
-
-      <form-base :data="data" :schema="schema" data-state-name="datastate" />   
-          
+      <form-base :data="data" :schema="schema" data-state-name="datastate" />             
     </template>
 
     import FormBase from './FormBase.vue';  
@@ -377,21 +381,22 @@ Here is a working vue-file, integrate this in your vue-project. lodash and vuex 
       
           data:{
             user: 'smith',
-            pw: 'secret'   
+            pw: 'secret'			
           },       
               
           schema:{
             user: { 
-              type:'text', 
-              label:'User:' 
+          		type:'text', 
+              	label:'User:',
+				placeholder:'User...'    
             },
             pw: { 
-              type:'password',
-              pattern:'^.{6,}', 
-              lable:'Password:',
-                title: 'Password must have minimal 6 Chars',
-              required:true,
-              validate:true
+				type:'password',
+				pattern:'^.{6,}', 
+				lable:'Password:',
+				title: 'Password must have minimal 6 Chars',
+				required:true,
+				validate:true
             }
           }  
         } 
@@ -404,7 +409,28 @@ Here is a working vue-file, integrate this in your vue-project. lodash and vuex 
       
 
 
+Features
+===
 
+* vue-component
+* edit plain or deep nested objects
+* support most of input types
+* full reactive result
+* configurable via Schema Defintion
+* configurable Style based on Materialize CSS 
+
+
+
+Dependencies
+===
+
+* Vue 2.0
+
+* Vuex
+
+* Lodash
+
+* Materialize CSSs
 
 
 
@@ -417,9 +443,6 @@ Similar Projects
 
 
 
-
-
-------
 
 
 
