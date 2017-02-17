@@ -9,13 +9,11 @@ const store = new Vuex.Store({
 
     // <form-base data-state-name="stateDataForm" />
     // stateDataForm: null     
-
-    data:null,    // vuex state object holding the edited data 
+    data: null,    // vuex state object holding the edited data  <form-base data-state-name="data" />
 
     // <form-base schema-state-name="stateSchemaForm" />     
     // stateSchemaForm: null     
-    
-    schema:null   // vuex state object holding the possible modified schema
+    schema: null   // vuex state object holding the possible modified schema <form-base schema-state-name="schema" />   
   
   }
 

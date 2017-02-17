@@ -2,20 +2,21 @@
 Vue-Form-Base
 ===
 
-`vue-form-base` is a Vue-Component and Form-Generator for editing plain or nested Javascript objects. 
+Vue-Form-Base is a Vue 2.0 Component and Form-Generator for editing plain or deep nested Javascript objects getting a reactive Result. 
 
-You have to create a lot of different forms? `vue-form-base` can simplify your job by creating forms from JS-Objects. 
+You have to create a lot of different forms? **Vue-Form-Base** can simplify your job by creating forms from JS-Objects.   
 
-Select from different input-types like Text, Password, Checkboxes, Radios, Select, Multiselect, Color, Files or a lot of other fields. In most cases the Browser specific implementation of **Input-Types** is used. [Some Informations to HTML5 input-types here](https://www.wufoo.com/html5/) 
+Select from different HTML5 Input-types like Text, Password, Checkboxes, Radios, Select, Multiselect, Color, Files or a lot of other fields. Apart from 'select' or multiselect' the Browser specific implementation of **Input-Types** is used. [Some Informations to HTML5 input-types here](https://www.wufoo.com/html5/) 
 
-We use the [Materialize CSS](http://materializecss.com/) framework for styling. Input Fields have a clear design, but don't worry you can change your layout with CSS in a lot of ways. For more details see section **Style with CSS**
+We use the [Materialize CSS](http://materializecss.com/) framework for styling. Input Fields have a clear, minimalistic design, but don't worry you can change your style with CSS in a lot of ways. For more details see section **Style with CSS**
 
 Add global **Validation** to the form or validate only a single field. Use inline validation or write a new function for individuell validation. 
 
 Make complex data editable by **mapping** your incoming and outgoing data:  i.e. change dateformats, trim strings or join/split arrays for editing in a textfield. 
 
-Get a full reactive Result by using **Vuex**
+And finally get a full reactive Result by using **Vuex.**
  
+
 Installation
 ===
 
@@ -48,7 +49,15 @@ and use it in template
 
 **Minimalistic Example** 
 
-Use your existing Data Object 
+If your **data-state-name** property has the value *datastate*, 
+then you must additionally define `datastate`  in Vuex State.
+ 
+	State:{ 
+		datastate:null,
+		... 
+	}
+
+Now use existing Data Object 
 
 	data:{ 
 	      name: 'smith',
@@ -73,9 +82,9 @@ and get this full editable Form
 
 
 
-A more realisitc Example providing a Schema containing same properties as your Data Model and define the fields you need.
+A more realistic Example.
 
-Your Data:
+Your Data to edit:
 
 
     data:{ 
@@ -89,12 +98,18 @@ Your Data:
       } 
     },
     
-Your Schema:
+Create a Schema Object:
 
     schema:{ 
       
-		user: {type:'text', label:'User:', placeholder:'User...'  },
-		
+		user: {type:'text', label:'User:', placeholder:'User...',
+			mapSet: (val, obj, data, schema) => { 
+				// type 'hide' to hide dependent item password 
+				schema.password.hidden = val === 'hide'; 
+				return val;
+			}
+		},
+     
 		email: {type:'email',label:'Email:', validate:true }, 
 		
 		password: {type:'password', label:'Password(Numbers only):', pattern:'[0-9]*', validate: msg => console.log(msg) },
@@ -107,6 +122,7 @@ Your Schema:
     }
 
 ![](https://raw.githubusercontent.com/wotamann/vue-form-base/master/images/name2.JPG)
+
 
 
 >IMPORTANT: 
@@ -137,7 +153,7 @@ Inside a single component .vue file you can use your component like this
 
     </template>
     
-**Access** the edited Result via Vuex State anywhere in your Project. 
+Get **Access** to the reactive Result using Vuex State anywhere in your Project. 
 
 
     this.$store.state.datastate
@@ -147,9 +163,36 @@ Inside a single component .vue file you can use your component like this
 > 
 > 'Data' and 'Schema' passed as Prop becomes not mutated. 
 
+Two Forms can be reactiv **Linked** by using the same state property
+
+	<form-base :data="data" :schema="schema" data-state-name="dataCommon" />
+
+	<form-base :data="data" :schema="schema" data-state-name="dataCommon" />
+
+and if you need different CSS
+
+	<form-base id="form1" :data="data" :schema="schema" data-state-name="dataCommon" />
+
+	<form-base id="form2" :data="data" :schema="schema" data-state-name="dataCommon" />
+ 
 
 **Reset**  modified Data and modified Schema use following code inside the parent single component .vue file
-	
+
+If you need to change the Schema-Object dynamically, like in this case hiding another item 
+
+	schema:{
+		...
+		user: {
+			type:'text', 
+			mapSet: (val, obj, data, schema) => { schema.password.hidden = val === 'hide'; return val }
+		},	
+		password: {
+		...
+		}
+	}
+
+then you need `datastate` and `schemastate` to restore like in this case
+
 	...
 	methods:{
 	    reset(){
@@ -243,13 +286,14 @@ In common use cases the the value will be another object with several properties
 		readonly: bool,          
 		hidden: bool,           // hide item - set from another item
 		
-		options: array,         // used with type: radio, list, text, select, mselect 
-		
+		options: array,         // used with type: radio, list, text, select, mselect
+ 
 		mapGet: function,       function( val, obj, state, schema ) {... return val}	
 		mapSet: function,       function( val, obj, state, schema ) {... return val} }
 		
 		validate: true          // use inline error message
-		validate: function,     function( msg, obj, state, schema, validity ) {...}         noValidate: function,   function( value, obj, state, schema ) {...}
+		validate: function,     function( msg, obj, state, schema, validity ) {...}         
+		noValidate: function,   function( value, obj, state, schema ) {...}
 	}          
           
 

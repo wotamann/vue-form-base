@@ -77,9 +77,9 @@
   
   /* set individual css for key mselect */
   #form-base .item.nested-selections-mselect-key select{ height:8rem; background-color: yellowgreen; color:white}
-  #form-base .item.select-type select{ height:3rem; background-color: yellowgreen; color:lightgoldenrodyellow}
+  #form-base .item.select-type select{ height:3rem; background-color: yellowgreen; color:white}
   
-  /* set individual css for key mselect */
+  /* set individual css for key fileselector */
   #form-base .item.fileselector-key .button { background-color: yellowgreen; color:white}
   #form-base .item.fileselector-key .path{ background-color: yellowgreen; color:white}
   
@@ -89,164 +89,157 @@
 <template>
 
   <div id="app" class="container">
-    
-    <p>Data Object</p>
+    <p>Not mutated Data:</p>
     <p>{{ data }}</p>
-    <p>State Object</p>
+    
+    <p>Reactive State:</p>    
     <p>{{ $store.state.data }}</p>
+   
     <button class="btn" @click="reset()">Reset</button> 
-    <hr>
-    
-    <div class="row">
+       
+      <div class="row">
       
-    
-      <div class="col s12">
-      
-        <!--use vue-form-base component-->
-        <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
-          <!--using named slots-->
-          <div slot="user-key" class="card green white-text collection-item">SLOT for USER-KEY</div>
-          <div slot="nested-selections-mselect-key" class="card">SLOT for MSELECT-KEY</div>
-        </form-base>
-      
-      </div>
+          <div class="col s6">
+            <!--use vue-form-base component-->
+            <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
+              <!--use named slots for each key -->       
+              <div slot="nested-selections-mselect-key" class="card green lighten-4">This is a named Slot</div>       
+            </form-base>
+          </div>
 
-      <div class="col s0">      
-        <!--use vue-form-base component different ID & CSS -->
-        <form-base id="right" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema"/>
+          <div class="col s6">
+            <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
+          </div>             
       
       </div>
-
-
-    </div>
-
-  </div>
 
 </template>
 
+
 <script>
-import FormBase from 'vue-form-base'
-import { cloneDeep, isString, isArray } from 'lodash'
+  import FormBase from './components/formBase.vue'
+  import { cloneDeep, isString, isArray } from 'lodash'
 
-export default {
+  export default {
 
-  name: 'app',
-
-  data() {
-    return {  
-   
-  
-      data:{
-        user: "smith",
-        email:'smith@online.com',          
-        password: '12345',
-        nested:{
-          checkbox: 'untouched',
-          radio: 'Yoga', 
-          color: '#bcdf2f',
-          selections: {
-            select: 'Resilience',
-            mselect: ['Yoga', 'Resilience'],
+    data() {
+      return {  
+    
+        data:{
+          user: "smith",
+          email:'smith@online.com',          
+          password: '12345',
+          nested:{
+            checkbox: 'untouched',
+            radio: 'Yoga', 
+            color: '#bcdf2f',
+            selections: {
+              select: 'Resilience',
+              mselect: ['Yoga', 'Resilience'],
+            },
           },
+          fileselector:'green-tea.jpg'
+
         },
-        fileselector:'green-tea.jpg'
 
-      },
+        schema:{    
+          // Schema Definition and available Properties
+          /* 
+            // recommended info https://www.wufoo.com/html5/
 
-      schema:{    
-        // Schema Definition and available Properties
-        /* 
-          // recommended info https://www.wufoo.com/html5/
+            schema:{ 
+                order: number,          // controls order of displaying 
+                
+                type: string,           // ['text', 'list', 'password', 'email', 'url', 'select', 'multiselect', 'file', 'radio', 'checkbox', 'number', 'range', 'date', 'time', 'week', 'month'] 
+                label: string,          // title of item    
+                placeholder: string,    // placeholder text if value is empty 
+                true: string,           // text if checkbox is checked  
+                false: string,          // text if checkbox is unchecked 
+                accept: string,         // only in type:'file' limit to accepted files -  audio/*, video/*, image/*, image/gif, .pdf, .doc  
+                title: string,          // optional define your own validation message
+                error: string,          // preset/set inline error msg
+                css: string             // inject at item level one or more classes
 
-          schema:{ 
-              order: number,          // controls order of displaying 
-              
-              type: string,           // ['text', 'list', 'password', 'email', 'url', 'select', 'multiselect', 'file', 'radio', 'checkbox', 'number', 'range', 'date', 'time', 'week', 'month'] 
-              label: string,          // title of item    
-              placeholder: string,    // placeholder text if value is empty 
-              true: string,           // text if checkbox is checked  
-              false: string,          // text if checkbox is unchecked 
-              accept: string,         // only in type:'file' limit to accepted files -  audio/*, video/*, image/*, image/gif, .pdf, .doc  
-              title: string,          // optional define your own validation message
-              error: string,          // preset/set inline error msg
+                min: number,            // limit number or range
+                max: number,            // limit number or range
+                step: number,        
+                maxlength: number,      // max length opf type text/email 
+                
+                pattern: regexString,
 
-              min: number,            // limit number or range
-              max: number,            // limit number or range
-              step: number,        
-              maxlength: number,      // max length opf type text/email 
-              
-              pattern: regexString,
+                multiple: bool,         // use with type:'file' select one or more files   
+                required: bool, 
+                disabled: bool, 
+                readonly: bool, 
+                hidden: bool,           // do not display item - could be dynamically set from another item
 
-              multiple: bool,         // use with type:'file' select one or more files   
-              required: bool, 
-              disabled: bool, 
-              readonly: bool, 
-              hidden: bool,           // do not display item - could be dynamically set from another item
+                options: array,         // used with type: radio, list, text, select, mselect 
+                
+                // this Function MUST return a value
+                mapGet: function,       function( value, obj, state, schema ) { value, obj.key, obj.value, obj.schema ->  IMPORTANT! Always return incoming mapped value }
+                
+                // this Function MUST return a value or a promise
+                mapSet: function,       function( value, obj, state, schema ) { value, obj.key, obj.value, obj.schema ->  IMPORTANT! Always return outgoing mapped value }
+                
+                // Validation 
+                validate: true          // use inline error message
+                validate: function,     function( validationMessage, obj, state, schema, validity ) { use validationMessage state to log or display validation message  }              
+                noValidate: function,     function( value, obj, state, schema ) { use value, obj.key, obj.value, obj.schema to handle novalidation }
+            }                    
+          */ 
+        
+          user: { 
+            type:'text', 
+            label:`User (Try 'hide' to hide password, value is required)`,
+            validate:true,
+            required:true, 
+            // mapGet: v => v.toUpperCase(),
+            mapSet: (val, obj, data, schema) => { schema.password.hidden = val.toUpperCase() === 'HIDE'; return val}, 
+          },
 
-              options: array,         // used with type: radio, list, text, select, mselect 
-              
-              // this Function MUST return a value
-              mapGet: function,       function( value, obj, state, schema ) { value, obj.key, obj.value, obj.schema ->  IMPORTANT! Always return incoming mapped value }
-              
-              // this Function MUST return a value or a promise
-              mapSet: function,       function( value, obj, state, schema ) { value, obj.key, obj.value, obj.schema ->  IMPORTANT! Always return outgoing mapped value }
-              
-              // Validation 
-              validate: true          // use inline error message
-              validate: function,     function( validationMessage, obj, state, schema, validity ) { use validationMessage state to log or display validation message  }              
-              noValidate: function,     function( value, obj, state, schema ) { use value, obj.key, obj.value, obj.schema to handle novalidation }
-          }                    
-        */ 
-       
-        user: { 
-          type:'text', 
-          label:`User (convert to Uppercase, Try 'HIDE' to hide password, value is required)`,
-          validate:true,
-          required:true, 
-          css:'red',
-          // mapGet: v => v.toUpperCase(),
-          mapSet: (val, obj, data, schema) => { schema.password.hidden = val.toUpperCase() === 'HIDE'; return val.toUpperCase()}, 
+          password:{
+            type:'password', 
+            css: 'yellow lighten-4',      // classes from materialize.css
+            label:'Password (only [0-9], invalidate with individual CSS & logs error to console and to user field )', 
+            required:true, 
+            pattern:'[0-9]*',
+            // validate undefined   // no validation 
+            // validate:true,       // show inline error message          
+            // validate:(msg) => console.warn(msg), 
+            validate:(msg, obj, data, schema, validity) => { console.warn(msg); obj.schema.error = `CUSTOM ERROR: ${msg}`; schema.user.error ="Wrong Password for this User" }, 
+            noValidate:(val, obj, data, schema) => { schema.user.error = null; obj.schema.error = null  }, 
+          },        
+
+          email: {type:'email',label:'Email:', validate:true }, 
+      
+          nested:{
+            checkbox: { type:'checkbox', true:'Yes!', false:'Oh No!'},
+            radio: { type:'radio', hidden:false, options:['Resilience','Green Tea','Yoga','Curry']}, 
+            color:{ type:'color'}, 
+            selections: {
+              select: { type:'select', label:'Select One', options:['Resilience','Green Tea','Yoga','Curry']},
+              mselect: { type:'multiselect', label:'Select Some', required:true,  validate:true, options:['Resilience','Green Tea','Yoga','Curry']},
+            }, 
+          },
+
+          fileselector:{ type:'file', multiple:true, label:'Get Teas!' }  
+
         },
-        password:{
-          type:'password', 
-          css: 'card amber', 
-          label:'Password (only [0-9], invalidate with individual CSS & logs error to console and to user field )', 
-          required:true, 
-          pattern:'[0-9]*',
-          // validate undefined   // no validation 
-          // validate:true,       // show error message - set CSS           
-          // validate:(msg) => console.warn(msg), 
-          validate:(msg, obj, data, schema, validity) => { console.warn(msg); obj.schema.error = `CUSTOM ERROR: ${msg}`; schema.user.error ="Wrong Password for this User" }, 
-          noValidate:(val, obj, data, schema) => { schema.user.error = null; obj.schema.error = null  }, 
-        },        
 
-        email: {type:'email',label:'Email:', validate:true }, 
-		
-        nested:{
-          checkbox: { type:'checkbox', true:'Yes!', false:'Oh No!'},
-          radio: { type:'radio', hidden:false, options:['Resilience','Green Tea','Yoga','Curry']}, 
-          color:{ type:'color'}, 
-          selections: {
-            select: { type:'select', label:'Select One', options:['Resilience','Green Tea','Yoga','Curry']},
-            mselect: { type:'multiselect', label:'Select Some', required:true,  validate:true, options:['Resilience','Green Tea','Yoga','Curry']},
-          }, 
-        },
-        fileselector:{ type:'file', multiple:true, label:'Get Teas!' }  
+      }
+    },
 
-      },
+    methods:{
 
-    }
-  },
+      reset(){
+        this.$store.state.data = cloneDeep(this.data); 
+        this.$store.state.schema = cloneDeep(this.schema)
+      }  
 
-  methods:{
-    reset(){
-      this.$store.state.data = cloneDeep(this.data); 
-      this.$store.state.schema = cloneDeep(this.schema)
-    }  
-  },
+    },
 
-  components: { FormBase },
+    components: { FormBase },
 
-}
+  }
 </script>
 
