@@ -44,12 +44,12 @@
 
         <!-- type radio -->
         <div :id="makeKeyUnique(obj)" v-if="obj.schema.type === 'radio'" >     
-          <radio v-for="(val, idx) in obj.schema.options" >
+          <template v-for="(val, idx) in obj.schema.options" >
             <input :id="makeKeyUnique(obj, idx)"  :name="obj.key" type="radio" :readonly="obj.schema.readonly" 
             :required="obj.schema.required" :disabled="obj.schema.disabled"             
             :title="obj.schema.title" :value="val" :checked="val === obj.value" @change="setValue($event, obj)" @input="setValue($event, obj)" />
             <label :for="makeKeyUnique(obj, idx)" >{{val}}</label>
-          </radio>
+          </template>
         </div>
   
         <!-- type file -->
