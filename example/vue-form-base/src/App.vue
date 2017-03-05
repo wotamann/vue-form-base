@@ -106,11 +106,12 @@
           </div>
 
           <div class="col s6">
-            <form-base id="" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
+            <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
+            </form-base>
           </div>             
       
       </div>
-
+  </div>
 </template>
 
 

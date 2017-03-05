@@ -3,7 +3,7 @@
  
   form .fade-enter-active, .fade-leave-active {  transition: opacity 1.5s }
   form .fade-enter, .fade-leave-to{ opacity: 0 }
-
+  form .error { color:red; font-size: 0.9rem; }
 </style>
 
 <!--HTML-->
@@ -19,7 +19,7 @@
 
       <li class="collection-item" :class="getItemClassName(obj)" v-for="(obj, index) in flatCombinedArraySorted" v-if="obj.schema.hidden !== true">
         
-        <!-- IMPORTANT: duplicate slots for each item or each type are not allowed in v-for loop -->
+        <!-- IMPORTANT: keynamed slots ok, but duplicate slots for each item or each type are not allowed in v-for loop -->
         <slot :name="getKeyClassName(obj)"></slot>
         
         <div class="label">

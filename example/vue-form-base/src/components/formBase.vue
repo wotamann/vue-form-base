@@ -19,7 +19,7 @@
 
       <li class="collection-item" :class="getItemClassName(obj)" v-for="(obj, index) in flatCombinedArraySorted" v-if="obj.schema.hidden !== true">
         
-        <!-- IMPORTANT: duplicate slots for each item or each type are not allowed in v-for loop -->
+        <!-- IMPORTANT: keynamed slots ok, but duplicate slots for each item or each type are not allowed in v-for loop -->
         <slot :name="getKeyClassName(obj)"></slot>
         
         <div class="label">
@@ -86,7 +86,7 @@
         </div>
 
         <transition name="fade">
-          <div class="error" v-if="obj.schema.error"><span>{{obj.schema.error}}<span></div>
+              <div class="error" v-if="obj.schema.error"><span>{{obj.schema.error}}</span></div>
         </transition>
         
       </li>
