@@ -1,5 +1,5 @@
 #dist in Client
-client/dist
+dist
 
 node_modules
 

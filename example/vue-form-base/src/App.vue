@@ -52,11 +52,9 @@
     
 
   /* ------------set GENERAL CSS ------------*/
-  #right .collection .item{ background-color:#ffd}
-
   #form-base .collection { padding: 12px}
   #form-base .collection .item{ background-color:#efe}
-  #form-base .error { color:red}
+  /*#form-base .error { color:red}*/
 
   /* set input pseudoselectors valid, invalid, focus css for all items */
   #form-base .item input:invalid{ background-color: #fdd; }
@@ -67,7 +65,7 @@
   /* ------------set TYPE CSS ------------*/
 
   /* set css for all items with type text */
-  #form-base .text-type { font-weight: 500 }
+  #form-base .text-type { color: #00d }
 
   
   /* ------------set KEY CSS ------------*/
@@ -108,7 +106,7 @@
           </div>
 
           <div class="col s6">
-            <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
+            <form-base id="" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
           </div>             
       
       </div>
@@ -199,8 +197,7 @@
 
           password:{
             type:'password', 
-            css: 'yellow lighten-4',      // classes from materialize.css
-            label:'Password (only [0-9], invalidate with individual CSS & logs error to console and to user field )', 
+             label:'Password (only [0-9], invalidate with individual CSS & logs error to console and to user field )', 
             required:true, 
             pattern:'[0-9]*',
             // validate undefined   // no validation 
@@ -210,7 +207,7 @@
             noValidate:(val, obj, data, schema) => { schema.user.error = null; obj.schema.error = null  }, 
           },        
 
-          email: {type:'email',label:'Email:', validate:true }, 
+          email: {type:'email',label:'Email ( injected css ):', validate:true, css: 'yellow lighten-4' }, 
       
           nested:{
             checkbox: { type:'checkbox', true:'Yes!', false:'Oh No!'},

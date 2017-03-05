@@ -3,7 +3,7 @@
  
   form .fade-enter-active, .fade-leave-active {  transition: opacity 1.5s }
   form .fade-enter, .fade-leave-to{ opacity: 0 }
-
+  form .error { color:red; font-size: 0.9rem; }
 </style>
 
 <!--HTML-->
@@ -44,12 +44,12 @@
 
         <!-- type radio -->
         <div :id="makeKeyUnique(obj)" v-if="obj.schema.type === 'radio'" >     
-          <template v-for="(val, idx) in obj.schema.options" >
+           <template v-for="(val, idx) in obj.schema.options" >
             <input :id="makeKeyUnique(obj, idx)"  :name="obj.key" type="radio" :readonly="obj.schema.readonly" 
             :required="obj.schema.required" :disabled="obj.schema.disabled"             
             :title="obj.schema.title" :value="val" :checked="val === obj.value" @change="setValue($event, obj)" @input="setValue($event, obj)" />
             <label :for="makeKeyUnique(obj, idx)" >{{val}}</label>
-          <template>
+          </template>
         </div>
   
         <!-- type file -->
