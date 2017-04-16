@@ -81,32 +81,51 @@
   #form-base .item.fileselector-key .button { background-color: yellowgreen; color:white}
   #form-base .item.fileselector-key .path{ background-color: yellowgreen; color:white}
   
+  .small {font-size: 0.9rem}
 </style>
 
 
 <template>
 
   <div id="app" class="container">
-    <p>Not mutated Data:</p>
-    <p>{{ data }}</p>
     
-    <p>Reactive State:</p>    
-    <p>{{ $store.state.data }}</p>
+    <div class="small">
+      <p>Unmutated Data:</p>
+      <p>{{ data }}</p>
+      
+      <p>Reactive State:</p>    
+      <p>{{ $store.state.data }}</p>
+    
+      <p>Reactive Schema:</p>    
+      <p>{{ $store.state.schema }}</p>
+    </div>
    
     <button class="btn" @click="reset()">Reset</button> 
        
       <div class="row">
       
           <div class="col s6">
+          
             <!--use vue-form-base component-->
             <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
-              <!--use named slots for each key -->       
-              <div slot="nested-selections-mselect-key" class="card green lighten-4">This is a named Slot</div>       
+
+              <!--use key named slots like: mykey-top-slot, mykey-bottom-slot -->                     
+              <div slot="nested-selections-mselect-top-slot" class="card green white-text">Named Slot at Top Position</div>       
+              <div slot="nested-selections-mselect-bottom-slot" class="card green white-text">Named Slot at Bottom Position</div>       
+            
             </form-base>
+          
           </div>
 
           <div class="col s6">
-            <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
+            <!--use vue-form-base component-->
+            <form-base id="another-form" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema" >
+              <div slot="email-top-slot" class="card amber white-text">Slot at TOP Position</div>       
+              <div slot="email-label-slot" class="card blue white-text">LABEL Slot: {{$store.state.schema &&  $store.state.schema.email.label}}</div>       -->
+              <div slot="email-mid-slot" class="card amber white-text">Slot at MID Position</div>       
+              <div slot="email-input-slot" class="card blue white-text"><h5>INPUT Replacing Slot</h5></div>       
+              <div slot="email-bottom-slot" class="card amber white-text">Slot at BOTTOM Position</div>       
+              <div slot="email-error-slot" class="card white red-text">ERROR Slot: {{$store.state.schema && $store.state.schema.email.error}}</div>       
             </form-base>
           </div>             
       
@@ -208,7 +227,8 @@
             noValidate:(val, obj, data, schema) => { schema.user.error = null; obj.schema.error = null  }, 
           },        
 
-          email: {type:'email',label:'Email ( injected css ):', validate:true, css: 'yellow lighten-4' }, 
+          email: {type:'email',label:'Email', validate:true, css: 'yellow lighten-4' }, 
+          // email: {type:'email',label:'Email ( injected css ):', validate:true, css: 'yellow lighten-4' }, 
       
           nested:{
             checkbox: { type:'checkbox', true:'Yes!', false:'Oh No!'},
@@ -224,6 +244,13 @@
 
         },
 
+      }
+    },
+
+
+    computed:{
+      validFormular(){
+        return 
       }
     },
 

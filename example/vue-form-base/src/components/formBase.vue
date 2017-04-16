@@ -1,94 +1,109 @@
 <!--CSS-->
 <style scoped>  
  
-  form .fade-enter-active, .fade-leave-active {  transition: opacity 1.5s }
+  form .fade-enter-active, .fade-leave-active {  transition: opacity 0.666s }
   form .fade-enter, .fade-leave-to{ opacity: 0 }
   form .error { color:red; font-size: 0.9rem; }
+
 </style>
 
 <!--HTML-->
 <template>     
 
   <form id="form-base" >
-
-    <slot></slot>
     
     <ul class="collection"> 
 
-      <slot name="collection"></slot>
-
       <li class="collection-item" :class="getItemClassName(obj)" v-for="(obj, index) in flatCombinedArraySorted" v-if="obj.schema.hidden !== true">
         
-        <!-- IMPORTANT: keynamed slots ok, but duplicate slots for each item or each type are not allowed in v-for loop -->
-        <slot :name="getKeyClassName(obj)"></slot>
+        <!-- top-slot -> <div slot="deep-nested-key-top-slot>    IMPORTANT: keynamed slots ok, but duplicate slots for each item or each type are not possible in v-for loop -->
+        <slot :name="getTopSlot(obj)"></slot>
         
-        <div class="label">
-          <label v-if="obj.schema.label !== null" :for="makeKeyUnique(obj)">{{obj.schema.label || obj.key}}</label>
-        </div>
+        <!-- label replacing slot   <div slot="deep-nested-key-label-slot> -->
+        <slot :name="getLabelSlot(obj)" v-if="obj.schema.label !== null">
+          <div class="label" >
+            <label :for="makeKeyUnique(obj)">{{obj.schema.label || obj.key}}</label>
+          </div>
+        </slot>
         
-        <!-- type select-->
-        <!--IMPORTANT class="browser-default" must be set in <select> for working VUE.JS with MATERIALIZE.CSS-->
-        <select :id="makeKeyUnique(obj,index)"  class="browser-default select" v-if="obj.schema.type === 'select'" 
-          :readonly="obj.schema.readonly" :required="obj.schema.required" :disabled="obj.schema.disabled" 
-          :title="obj.schema.title" @change="setValue($event, obj)">              
-          <option v-for="val in obj.schema.options" :selected="val == obj.value" :value="val">{{val}}</option>
-        </select>
+        <!-- mid-slot -> <div slot="deep-nested-key-mid-slot>  -->
+        <slot :name="getMidSlot(obj)"></slot>
+        
+        <!-- replacing input slot -> <div slot="deep-nested-key-input-slot">  -->
+        <slot :name="getInputSlot(obj)">
+          <!-- type select-->
+          <!--IMPORTANT class="browser-default" must be set in <select> for working VUE.JS with MATERIALIZE.CSS-->
+          <select :id="makeKeyUnique(obj,index)"  class="browser-default select" v-if="obj.schema.type === 'select'" 
+            :readonly="obj.schema.readonly" :required="obj.schema.required" :disabled="obj.schema.disabled" 
+            :title="obj.schema.title" @change="setValue($event, obj)">              
+            <option v-for="val in obj.schema.options" :selected="val == obj.value" :value="val">{{val}}</option>
+          </select>
 
-        <!-- type multiselect -->
-        <!--IMPORTANT class="browser-default" must be set in <multiselect> for working VUE.JS with MATERIALIZE.CSS-->
-        <select :id="makeKeyUnique(obj,index)"  class="browser-default multiselect" v-if="obj.schema.type === 'multiselect'" multiple
-          :readonly="obj.schema.readonly" :required="obj.schema.required" :disabled="obj.schema.disabled"             
-          :title="obj.schema.title" @change="setValue($event, obj)">              
-          <option v-for="val in obj.schema.options" :selected="obj.value && obj.value.includes(val)" :value="val">{{val}}</option>
-        </select>
+          <!-- type multiselect -->
+          <!--IMPORTANT class="browser-default" must be set in <multiselect> for working VUE.JS with MATERIALIZE.CSS-->
+          <select :id="makeKeyUnique(obj,index)"  class="browser-default multiselect" v-if="obj.schema.type === 'multiselect'" multiple
+            :readonly="obj.schema.readonly" :required="obj.schema.required" :disabled="obj.schema.disabled"             
+            :title="obj.schema.title" @change="setValue($event, obj)">              
+            <option v-for="val in obj.schema.options" :selected="obj.value && obj.value.includes(val)" :value="val">{{val}}</option>
+          </select>
 
-        <!-- type radio -->
-        <div :id="makeKeyUnique(obj)" v-if="obj.schema.type === 'radio'" >     
-           <template v-for="(val, idx) in obj.schema.options" >
-            <input :id="makeKeyUnique(obj, idx)"  :name="obj.key" type="radio" :readonly="obj.schema.readonly" 
-            :required="obj.schema.required" :disabled="obj.schema.disabled"             
-            :title="obj.schema.title" :value="val" :checked="val === obj.value" @change="setValue($event, obj)" @input="setValue($event, obj)" />
-            <label :for="makeKeyUnique(obj, idx)" >{{val}}</label>
-          </template>
-        </div>
+          <!-- type radio -->
+          <div :id="makeKeyUnique(obj)" v-if="obj.schema.type === 'radio'" >     
+            <template v-for="(val, idx) in obj.schema.options" >
+              <input :id="makeKeyUnique(obj, idx)"  :name="obj.key" type="radio" :readonly="obj.schema.readonly" 
+              :required="obj.schema.required" :disabled="obj.schema.disabled"             
+              :title="obj.schema.title" :value="val" :checked="val === obj.value" @change="setValue($event, obj)" @input="setValue($event, obj)" />
+              <label :for="makeKeyUnique(obj, idx)" >{{val}}</label>
+            </template>
+          </div>
+    
+          <!-- type file -->
+          <div class="file-field input-field" v-if="obj.schema.type === 'file'" >
+            <div class="btn button">
+              <span>{{obj.schema.label}}</span>
+              <input :id="makeKeyUnique(obj)"  type="file" 
+                :readonly="obj.schema.readonly" :required="obj.schema.required" :disabled="obj.schema.disabled" :accept="obj.schema.accept"  
+                :title="obj.schema.title" :multiple="obj.schema.multiple || false" :pattern="obj.schema.pattern" @change="setValue($event, obj)"  />
+            </div>
+            <div class="file-path-wrapper" >
+              <input class="file-path path" type="text" :value="getValue(obj)" :placeholder="placeholder(obj)" 
+              :readonly="obj.schema.readonly" :disabled="obj.schema.disabled">
+            </div>
+          </div>
+          
+
+          <!-- all input types except radio, select or file -->
+          <div v-if="obj.schema.type !== 'file' && obj.schema.type !== 'radio' && obj.schema.type !== 'select' && obj.schema.type !== 'multiselect'" >
+            
+            <input :id="makeKeyUnique(obj)" :list="makeKeyUnique(obj,index)" :type="obj.schema.type" 
+            :readonly="obj.schema.readonly" :required="obj.schema.required" :disabled="obj.schema.disabled" :placeholder="placeholder(obj)"
+            :title="obj.schema.title" :maxlength="obj.schema.maxlength" :min="obj.schema.min" :max="obj.schema.max" :step="obj.schema.step" :pattern="obj.schema.pattern" 
+            :value="getValue(obj)" :checked="setCheckbox(obj)" @change="setValue($event, obj)" @invalid="setValue($event, obj)"  @input="setValue($event, obj)" />
+            
+            <!-- if type checkbox then set label -->
+            <label v-if="obj.schema.type === 'checkbox'" :for="makeKeyUnique(obj)" >{{obj.value}}</label>
+            
+            <!-- if options has array && optional type is list -->
+            <datalist :id="makeKeyUnique(obj,index)" v-if="Array.isArray(obj.schema.options)" >
+              <option v-for="val in obj.schema.options" :value="val"></option>
+            </datalist>
+          
+          </div>
   
-        <!-- type file -->
-        <div class="file-field input-field" v-if="obj.schema.type === 'file'" >
-          <div class="btn button">
-            <span>{{obj.schema.label}}</span>
-            <input :id="makeKeyUnique(obj)"  type="file" 
-              :readonly="obj.schema.readonly" :required="obj.schema.required" :disabled="obj.schema.disabled" :accept="obj.schema.accept"  
-              :title="obj.schema.title" :multiple="obj.schema.multiple || false" :pattern="obj.schema.pattern" @change="setValue($event, obj)"  />
-          </div>
-          <div class="file-path-wrapper" >
-            <input class="file-path path" type="text" :value="getValue(obj)" :placeholder="placeholder(obj)" 
-            :readonly="obj.schema.readonly" :disabled="obj.schema.disabled">
-          </div>
-        </div>
-        
+        </slot>
 
-        <!-- all input types except radio, select or file -->
-        <div v-if="obj.schema.type !== 'file' && obj.schema.type !== 'radio' && obj.schema.type !== 'select' && obj.schema.type !== 'multiselect'" >
-          
-          <input :id="makeKeyUnique(obj)" :list="makeKeyUnique(obj,index)" :type="obj.schema.type" 
-          :readonly="obj.schema.readonly" :required="obj.schema.required" :disabled="obj.schema.disabled" :placeholder="placeholder(obj)"
-          :title="obj.schema.title" :maxlength="obj.schema.maxlength" :min="obj.schema.min" :max="obj.schema.max" :step="obj.schema.step" :pattern="obj.schema.pattern" 
-          :value="getValue(obj)" :checked="setCheckbox(obj)" @change="setValue($event, obj)" @invalid="setValue($event, obj)"  @input="setValue($event, obj)" />
-           
-          <!-- if type checkbox then set label -->
-          <label v-if="obj.schema.type === 'checkbox'" :for="makeKeyUnique(obj)" >{{obj.value}}</label>
-          
-          <!-- if options has array && optional type is list -->
-          <datalist :id="makeKeyUnique(obj,index)" v-if="Array.isArray(obj.schema.options)" >
-            <option v-for="val in obj.schema.options" :value="val"></option>
-          </datalist>
-        
-        </div>
-
-        <transition name="fade">
-              <div class="error" v-if="obj.schema.error"><span>{{obj.schema.error}}</span></div>
+        <transition name="fade" >          
+          <!-- replacing error slot  -> <div slot="deep-nested-key-error-slot> -->
+          <slot :name="getErrorSlot(obj)" v-if="obj.schema.error">
+            <div class="error" >
+              <span>{{obj.schema.error}}</span>
+            </div>
+          </slot>
         </transition>
         
+        <!-- bottom slot  -> <div slot="deep-nested-key-bottom-slot> -->
+        <slot :name="getBottomSlot(obj)"></slot>
+      
       </li>
 
     </ul>    
@@ -99,15 +114,26 @@
 
 <!--Script-->
 <script>
-  
-  import { isString, isPlainObject, isFunction, isUndefined, clone, cloneDeep, orderBy } from 'lodash'     
 
-  const sortDirection = 'ASC'         // sort formular item 'asc' or 'desc'
-  const pathDelimiter = '.'               
-  const makeKeyUniqueDelimiter ='-'
-  const typeClassAppendix = '-type'
-  const keyClassAppendix = '-key'
-  const keyIndividualizer = Math.random().toString(36).substr(2, 3)
+  // import & declarations
+    import { isString, isPlainObject, isFunction, isUndefined, clone, cloneDeep, orderBy } from 'lodash'     
+
+    const sortDirection = 'ASC'         // sort formular item 'asc' or 'desc'
+    const pathDelimiter = '.'               
+    const makeKeyUniqueDelimiter ='-'
+
+    const typeClassAppendix = '-type'
+    const keyClassAppendix = '-key'
+
+    const topSlotAppendix   = '-top-slot'
+    const labelSlotAppendix = '-label-slot'
+    const midSlotAppendix   = '-mid-slot'
+    const inputSlotAppendix = '-input-slot'
+    const bottomSlotAppendix= '-bottom-slot'
+    const errorSlotAppendix = '-error-slot'
+
+    const keyIndividualizer = Math.random().toString(36).substr(2, 3)  
+  //
 
   export default {
     
@@ -183,11 +209,37 @@
         return obj.schema.true ? obj.schema.true === obj.value : obj.value
       },
       
+      // slot identifier  replace label, error, input 
+        getTopSlot(obj){
+          // get KEY specific name by replacing '.' with '-' and appending '-top-slot'  -> 'adress-city-top-slot' 
+          return this.redoMakeKeyUnique(obj.key).replace(/\./g,'-') + topSlotAppendix
+        },
+        getLabelSlot(obj){
+          // get KEY specific name by replacing '.' with '-' and appending '-label-slot'  -> 'adress-city-label-slot' 
+          return this.redoMakeKeyUnique(obj.key).replace(/\./g,'-') + labelSlotAppendix
+        },
+        getMidSlot(obj){
+          // get KEY specific name by replacing '.' with '-' and appending '-top-slot'  -> 'adress-city-top-slot' 
+          return this.redoMakeKeyUnique(obj.key).replace(/\./g,'-') + midSlotAppendix
+        },
+        getInputSlot(obj){
+          // get KEY specific name by replacing '.' with '-' and appending '-input-slot'  -> 'adress-city-input-slot' 
+          return this.redoMakeKeyUnique(obj.key).replace(/\./g,'-') + inputSlotAppendix
+        },        
+        getBottomSlot(obj){
+          // get KEY specific name by replacing '.' with '-' and appending '-bottom-slot'  -> 'adress-city-bottom-slot' 
+          return this.redoMakeKeyUnique(obj.key).replace(/\./g,'-') + bottomSlotAppendix
+        },
+        getErrorSlot(obj){
+          // get KEY specific name by replacing '.' with '-' and appending '-error-slot'  -> 'adress-city-error-slot' 
+          return this.redoMakeKeyUnique(obj.key).replace(/\./g,'-') + errorSlotAppendix
+        },
+      //
+
       getKeyClassName(obj){
         // get KEY specific class name by replacing '.' with '-' and appending '-key'  -> 'adress-city-key' 
         return this.redoMakeKeyUnique(obj.key).replace(/\./g,'-') + keyClassAppendix
       },
-
       getTypeClassName(obj){        
         // get TYPE specific class name by appending '-type' -> 'checkbox-type'
         return obj.schema.type + typeClassAppendix
@@ -199,9 +251,8 @@
       },
 
       getItemClassName(obj){
-
-        console.log(`item ${this.getTypeClassName(obj)} ${this.getKeyClassName(obj)} ${this.getCssClassName(obj)}`)
         // each item gets a class 'item', a class 'item-type' like 'checkbox-type', a class 'item-key' like 'adress-city-key' and a class from schema.css      
+        // console.log(`item ${this.getTypeClassName(obj)} ${this.getKeyClassName(obj)} ${this.getCssClassName(obj)}`)
         return `item ${this.getTypeClassName(obj)} ${this.getKeyClassName(obj)} ${this.getCssClassName(obj)}`
       },
 
