@@ -271,9 +271,13 @@ In common use cases the the value will be another object with several properties
 		accept: string,         // type:'file' - limit files audio/*, image/*, .pdf
 		title: string,          // define your own validation message
 		error: string,          // preset/set inline error msg
-		css: string				// inject one or more classnames at item level 
-		
-		pattern: string         // regex to control input  
+
+		css: string,            // inject one or more classnames at item level 
+		// Use 12 column grid system from materializecss.com/grid.html for displaying items
+		// for example a 12 column grid with 3 items in one row would look like:
+		// schema:{ item1:{ css:'col s4'}, item2:{ css:'col s4'}, item3:{ css:'next-row col s4'} }
+     	
+		pattern: string,        // regex to control input  
 		
 		min: number,            // limit number or range
 		max: number,            // limit number or range
@@ -302,11 +306,11 @@ In common use cases the the value will be another object with several properties
     ...
     schema:{ 
 	    
-	    user: { type:'text', label:'Fullname:', placeholder:'Name...'}, 
+	    user: { type:'text', label:'Fullname:', placeholder:'Name...', css:'col s6'}, 
 	    
- 	    email: {type:'email', validate:true, mapSet: v => v && v.toUpperCase() },
+        email: {type:'email', validate:true, mapSet: v => v && v.toUpperCase(), css:'next-row col s6' },
  	    
- 	    singleRole:{ type:'select', options:['Admin','Guest','User'] }, 
+        singleRole:{ type:'select', options:['Admin','Guest','User'] }, 
  	   
       }
       ...
