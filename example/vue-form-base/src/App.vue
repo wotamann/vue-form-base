@@ -4,14 +4,11 @@
     Customize your VUE-FORM-BASE component using the following CSS-Classnames
     -------------------------------------------------------------------------
     
-
-    INFORMATION: don't use '<style scoped>' for this definitions, because a 'scoped' definition is inside the component not accessable 
-  
-    
+    SCOPED - INFORMATION: don't use '<style scoped>' for this definitions, because a 'scoped' definition is inside the component not accessable 
+      
     // FORM-ID  
     #form-base  // Is the default name. If you need different CSS for two forms then change default value 'form-base'  
                    by setting a different 'id' <form-base id="custom-id" ... /> for each component    
-
 
     // GENERAL classes ----------------------------------------------------------------------------------          
     #form-base .collection,   // 
@@ -83,14 +80,14 @@
   #form-base .item.fileselector-key .path{ background-color: yellowgreen; color:white}
   
   .small {font-size: 0.9rem}
-</style>
 
+</style>
 
 <template>
 
-  <div id="app" class="container">
+  <div id="app" >
     
-    <div class="small">
+    <div class="small container">
       <p>Unmutated Data:</p>
       <p>{{ data }}</p>
       
@@ -99,38 +96,41 @@
     
       <p>Reactive Schema:</p>    
       <p>{{ $store.state.schema }}</p>
+      
+      <button class="btn" @click="reset()">Reset</button> 
     </div>
    
-    <button class="btn" @click="reset()">Reset</button> 
        
       <div class="row">
       
-          <div class="col s12">
+        <!--use vue-form-base component LEFT-->
+        <div class="col m6 s12">          
+          <p>Left Formbase</p>
           
-            <!--use vue-form-base component-->
-            <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
+          <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
+            <!--use key named slots like: mykey-top-slot, mykey-bottom-slot -->                     
+            <div slot="nested-selections-mselect-top-slot" class="card green white-text">Named Slot at Top Position</div>       
+            <div slot="nested-selections-mselect-bottom-slot" class="card green white-text">Named Slot at Bottom Position</div>       
+            <div slot="nested-color-bottom-slot" class="card blue white-text">Named Slot at Bottom Position</div>                 
+          </form-base>
+        
+        </div>
+        
+        <!--use vue-form-base component RIGHT-->
+        <div class="col m6 s12">          
+          <p>Right Formbase (different CSS)</p>
 
-              <!--use key named slots like: mykey-top-slot, mykey-bottom-slot -->                     
-              <div slot="nested-selections-mselect-top-slot" class="card green white-text">Named Slot at Top Position</div>       
-              <div slot="nested-selections-mselect-bottom-slot" class="card green white-text">Named Slot at Bottom Position</div>       
-              <div slot="nested-color-bottom-slot" class="card blue white-text">Named Slot at Bottom Position</div>       
-            
-            </form-base>
-          
-          </div>
-
-            <!--use vue-form-base component-->
-          <!--<div class="col s6">
-            <form-base id="another-form" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema" >
-              <div slot="email-top-slot" class="card amber white-text">Slot at TOP Position</div>       
-              <div slot="email-label-slot" class="card blue white-text">LABEL Slot: {{$store.state.schema &&  $store.state.schema.email.label}}</div>       
-              <div slot="email-mid-slot" class="card amber white-text">Slot at MID Position</div>       
-              <div slot="email-input-slot" class="card blue white-text"><h5>INPUT Replacing Slot</h5></div>       
-              <div slot="email-bottom-slot" class="card amber white-text">Slot at BOTTOM Position</div>       
-              <div slot="email-error-slot" class="card white red-text">ERROR Slot: {{$store.state.schema && $store.state.schema.email.error}}</div>       
-            </form-base>
-          </div>             
-        -->
+          <form-base id="another-form" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema" >
+            <div slot="email-top-slot" class="card amber white-text">Slot at TOP Position</div>       
+            <div slot="email-label-slot" class="card blue white-text">LABEL Slot: {{$store.state.schema &&  $store.state.schema.email.label}}</div>       
+            <div slot="email-mid-slot" class="card amber white-text">Slot at MID Position</div>       
+            <div slot="email-input-slot" class="card blue white-text"><h6>INPUT Replacing Slot</h6></div>       
+            <div slot="email-bottom-slot" class="card amber white-text">Slot at BOTTOM Position</div>       
+            <div slot="email-error-slot" class="card white red-text">ERROR Slot: {{$store.state.schema && $store.state.schema.email.error}}</div>       
+          </form-base>
+        
+        </div>             
+        
       </div>
   </div>
 </template>
@@ -214,7 +214,7 @@
         
           user: { 
             type:'text', 
-            label:`User (Try 'hide' to hide password, value is required)`,
+            label:`User (Try 'hide' to hide password, Value is required)`,
             validate:true,
             required:true, 
             // mapGet: v => v.toUpperCase(),
@@ -225,7 +225,7 @@
 
           password:{
             type:'password', 
-             label:'Password (only [0-9], invalidate with individual CSS & logs error to console and to user field )', 
+             label:'Password [0-9], invalidate with own CSS & logs error to console and to user field )', 
             required:true, 
             pattern:'[0-9]*',
             // validate undefined   // no validation 
@@ -236,12 +236,12 @@
             css:'col l3 m6 s12',
           },        
 
-          email: {type:'email',label:'Email', validate:true, css: 'yellow lighten-4 col l3 m6 s12' }, 
+          email: {type:'email',label:'Email (Grid:l3 m6 s12)', validate:true, css: 'yellow lighten-4 col l3 m6 s12' }, 
         
           nested:{
-            checkbox: { type:'checkbox', true:'Yes!', false:'Oh No!', css: 'row col l3 m6 s12' },
+            checkbox: { type:'checkbox', true:'Yes!', false:'Oh No!', css: 'next-row col l3 m6 s12' },
             radio: { type:'radio', hidden:false, options:['Resilience','Green Tea','Yoga','Curry'], css: 'col s6' }, 
-            color:{ type:'color', css: 'row col s6' }, 
+            color:{ type:'color', css: 'next-row col s6' }, 
             selections: {
               select: { type:'select', label:'Select One', options:['Resilience','Green Tea','Yoga','Curry']},
               mselect: { type:'multiselect', label:'Select Some', required:true,  validate:true, options:['Resilience','Green Tea','Yoga','Curry']},
@@ -250,9 +250,15 @@
 
           fileselector:{ type:'file', multiple:true, label:'Get Teas!' }  ,
 
-          user1:{type:'text', label:'User with Grid: col l4 m6 s12 ', css:'col l4 m6 s12'},
-          email1:{type:'email', label:'Email with Grid: col l4 m6 s12 ', css:'col l4 m6 s12'},
-          password1:{type:'password', label:'PW with Grid: col l4 m6 s12 ', css:'row col l4 m6 s12'},
+          // use grid for displaying items
+          // 12 column grid with 3 items in one row -> schema:{ item1:{ css:'col s4' }, item2:{ css:'col s4' } , item3:{ css:'next-row col s4' } }
+
+          // use http://materializecss.com/grid.html  12 column - grid system:   css:'col s4'  
+          user1:{type:'text', label:'User Grid', css:'col l4 m6 s12'},
+          // use http://materializecss.com/grid.html  12 column - grid system:   css:'col s4'  
+          email1:{type:'email', label:'Email Grid', css:'col l4 m6 s12'},
+          // use http://materializecss.com/grid.html  12 column - grid system:   css:'next-row col s4'  - finish columns with next-row   
+          password1:{type:'password', label:'PW Grid: col l4 m6 s12 ', css:'next-row col l4 m6 s12'},
 
         },
 

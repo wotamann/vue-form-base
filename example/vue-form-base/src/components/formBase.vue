@@ -16,8 +16,9 @@
 <template>     
 
   <form id="form-base" >
-    
-    <ul class="collection"> 
+
+    <!--using grids from materialize.css the class 'row' must be set here-->
+    <ul class="collection" :class="nextRowClass"> 
 
       <li :class="getGridClassName(obj)" v-for="(obj, index) in flatCombinedArraySorted" v-if="obj.schema.hidden !== true"  >
 
@@ -130,6 +131,9 @@
     const sortDirection = 'ASC'         // sort formular item 'asc' or 'desc'
     const pathDelimiter = '.'               
     const makeKeyUniqueDelimiter ='-'
+    
+    const nextRowName = 'next-row'
+    const nextRowClass = 'row'
 
     const typeClassAppendix = '-type'
     const keyClassAppendix = '-key'
@@ -169,6 +173,7 @@
 
     data(){      
       return {
+        nextRowClass,
         keyIndividualizer,
         flatCombinedArray: [], 
         noSchemaStateName: {}  
@@ -246,10 +251,10 @@
       //
       
       // getClassName functions      
-        getGridClassName(obj){
-          const rowClass='row'
-          // when using grid generate a new row   http://materializecss.com/grid.html
-          return obj && obj.schema && obj.schema.css && obj.schema.css.indexOf('row') > -1 ? rowClass : '';
+        getGridClassName(obj){          
+          // when using grid generate a new row by setting css:'next-row col s6'  ->  http://materializecss.com/grid.html
+          // 12 column grid with 3 items in one row -> schema:{ item1:{ css:'col s4' }, item2:{ css:'col s4' } , item3:{ css:'next-row col s4' } }
+          return obj.schema.css && obj.schema.css.indexOf(nextRowName) > -1 ? nextRowClass : '';
         },
         getKeyClassName(obj){
           // get KEY specific class name by replacing '.' with '-' and appending '-key'  -> 'adress-city-key' 
