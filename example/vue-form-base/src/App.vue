@@ -52,8 +52,9 @@
     
 
   /* ------------set GENERAL CSS ------------*/
-  #form-base .collection { padding: 12px}
-  #form-base .collection .item{ background-color:#efe}
+  #form-base .collection { padding: 12px;  }
+  #form-base .collection-item{ border: 1px solid #ddf; margin-bottom: 2px}
+  #form-base .collection .item{ border-bottom: 1px solid #f55}
   /*#form-base .error { color:red}*/
 
   /* set input pseudoselectors valid, invalid, focus css for all items */
@@ -104,7 +105,7 @@
        
       <div class="row">
       
-          <div class="col s6">
+          <div class="col s12">
           
             <!--use vue-form-base component-->
             <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
@@ -112,23 +113,24 @@
               <!--use key named slots like: mykey-top-slot, mykey-bottom-slot -->                     
               <div slot="nested-selections-mselect-top-slot" class="card green white-text">Named Slot at Top Position</div>       
               <div slot="nested-selections-mselect-bottom-slot" class="card green white-text">Named Slot at Bottom Position</div>       
+              <div slot="nested-color-bottom-slot" class="card blue white-text">Named Slot at Bottom Position</div>       
             
             </form-base>
           
           </div>
 
-          <div class="col s6">
             <!--use vue-form-base component-->
+          <!--<div class="col s6">
             <form-base id="another-form" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema" >
               <div slot="email-top-slot" class="card amber white-text">Slot at TOP Position</div>       
-              <div slot="email-label-slot" class="card blue white-text">LABEL Slot: {{$store.state.schema &&  $store.state.schema.email.label}}</div>       -->
+              <div slot="email-label-slot" class="card blue white-text">LABEL Slot: {{$store.state.schema &&  $store.state.schema.email.label}}</div>       
               <div slot="email-mid-slot" class="card amber white-text">Slot at MID Position</div>       
               <div slot="email-input-slot" class="card blue white-text"><h5>INPUT Replacing Slot</h5></div>       
               <div slot="email-bottom-slot" class="card amber white-text">Slot at BOTTOM Position</div>       
               <div slot="email-error-slot" class="card white red-text">ERROR Slot: {{$store.state.schema && $store.state.schema.email.error}}</div>       
             </form-base>
           </div>             
-      
+        -->
       </div>
   </div>
 </template>
@@ -145,8 +147,8 @@
     
         data:{
           user: "smith",
-          email:'smith@online.com',          
           password: '12345',
+          email:'smith@online.com',          
           nested:{
             checkbox: 'untouched',
             radio: 'Yoga', 
@@ -156,7 +158,11 @@
               mselect: ['Yoga', 'Resilience'],
             },
           },
-          fileselector:'green-tea.jpg'
+          fileselector:'green-tea.jpg',
+
+          user1: "wally",
+          email1:'wally@online.com',          
+          password1: '12345',
 
         },
 
@@ -213,6 +219,8 @@
             required:true, 
             // mapGet: v => v.toUpperCase(),
             mapSet: (val, obj, data, schema) => { schema.password.hidden = val.toUpperCase() === 'HIDE'; return val}, 
+            css:'col l3 m6 s12',
+            
           },
 
           password:{
@@ -225,22 +233,26 @@
             // validate:(msg) => console.warn(msg), 
             validate:(msg, obj, data, schema, validity) => { console.warn(msg); obj.schema.error = `CUSTOM ERROR: ${msg}`; schema.user.error ="Wrong Password for this User" }, 
             noValidate:(val, obj, data, schema) => { schema.user.error = null; obj.schema.error = null  }, 
+            css:'col l3 m6 s12',
           },        
 
-          email: {type:'email',label:'Email', validate:true, css: 'yellow lighten-4' }, 
-          // email: {type:'email',label:'Email ( injected css ):', validate:true, css: 'yellow lighten-4' }, 
-      
+          email: {type:'email',label:'Email', validate:true, css: 'yellow lighten-4 col l3 m6 s12' }, 
+        
           nested:{
-            checkbox: { type:'checkbox', true:'Yes!', false:'Oh No!'},
-            radio: { type:'radio', hidden:false, options:['Resilience','Green Tea','Yoga','Curry']}, 
-            color:{ type:'color'}, 
+            checkbox: { type:'checkbox', true:'Yes!', false:'Oh No!', css: 'row col l3 m6 s12' },
+            radio: { type:'radio', hidden:false, options:['Resilience','Green Tea','Yoga','Curry'], css: 'col s6' }, 
+            color:{ type:'color', css: 'row col s6' }, 
             selections: {
               select: { type:'select', label:'Select One', options:['Resilience','Green Tea','Yoga','Curry']},
               mselect: { type:'multiselect', label:'Select Some', required:true,  validate:true, options:['Resilience','Green Tea','Yoga','Curry']},
             }, 
           },
 
-          fileselector:{ type:'file', multiple:true, label:'Get Teas!' }  
+          fileselector:{ type:'file', multiple:true, label:'Get Teas!' }  ,
+
+          user1:{type:'text', label:'User with Grid: col l4 m6 s12 ', css:'col l4 m6 s12'},
+          email1:{type:'email', label:'Email with Grid: col l4 m6 s12 ', css:'col l4 m6 s12'},
+          password1:{type:'password', label:'PW with Grid: col l4 m6 s12 ', css:'row col l4 m6 s12'},
 
         },
 
