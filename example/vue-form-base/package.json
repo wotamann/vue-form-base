@@ -1,6 +1,6 @@
 {
-  "name": "vue-form-base",
-  "description": "Generate Form from nested objects and get a reactive result in Vuex state",
+  "name": "vue-form-base-demo",
+  "description": "demo of vue-form-base",
   "version": "1.0.0",
   "author": "wotamann <woko@aon.at>",
   "private": true,
@@ -12,6 +12,7 @@
   "dependencies": {
     "lodash": "^4.17.4",
     "vue": "^2.1.0",
+    "vue-form-base": "^0.0.2",
     "vuex": "^2.1.2"
   },
   "devDependencies": {
