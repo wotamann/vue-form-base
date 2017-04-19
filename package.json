@@ -1,6 +1,6 @@
 {
   "name": "vue-form-base",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Form-Generator: a Vue 2.0 component, reactive Result using Vuex, responsive Display",
   "main": "FormBase.vue",
   "scripts": {
