@@ -46,30 +46,28 @@
     
     
   */
-    
 
-  /* ------------set GENERAL CSS ------------*/
-  #form-base .collection { padding: 12px;  }
-  #form-base .collection-item{ border: 1px solid #ddf; margin-bottom: 2px}
-  #form-base .collection .item{ border-bottom: 1px solid #f55}
-  /*#form-base .error { color:red}*/
+  /* ---- General CSS ---- */
+  #form-base .collection { padding: 8px;  }
+  #form-base .collection .item{ background-color: #efe; border-bottom: 1px solid #0c0}
+  #right-form-base .collection .item{ background-color: #eeeeff; border-bottom: 1px solid #55f}
 
-  /* set input pseudoselectors valid, invalid, focus css for all items */
+  /* ---- set INPUT Pseudoselectors valid, invalid, focus css for all items ---- */
   #form-base .item input:invalid{ background-color: #fdd; }
   #form-base .item input:valid{ background-color: #dfd; }
   #form-base .item input:focus{ background-color: #ffd; }    
 
-
-  /* ------------set TYPE CSS ------------*/
-
-  /* set css for all items with type text */
-  #form-base .text-type { color: #00d }
-
-  
-  /* ------------set KEY CSS ------------*/
+  /* ---- set TYPE CSS ---- */
  
+  /* set css for all items with type text */
+  #right-form-base .text-type { color: #00d }
+  
+
+  /* ---- set KEY CSS ---- */
+
   /* set individual invalid-css only for password key */
   #form-base .item.password-key input:invalid{ background-color: darkorange; color: white }
+  #right-form-base .item.password-key input:invalid{ background-color: purple; color: white } 
   
   /* set individual css for key mselect */
   #form-base .item.nested-selections-mselect-key select{ height:8rem; background-color: yellowgreen; color:white}
@@ -79,7 +77,7 @@
   #form-base .item.fileselector-key .button { background-color: yellowgreen; color:white}
   #form-base .item.fileselector-key .path{ background-color: yellowgreen; color:white}
   
-  .small {font-size: 0.9rem}
+  .small {font-size: 0.85rem; color: #555; padding: 1rem}
 
 </style>
 
@@ -87,7 +85,7 @@
 
   <div id="app" >
     
-    <div class="small container">
+    <div class="small">
       <p>Unmutated Data:</p>
       <p>{{ data }}</p>
       
@@ -108,10 +106,7 @@
           <p>Left Formbase</p>
           
           <form-base :data="data" :schema="schema" data-state-name="data" schema-state-name="schema">
-            <!--use key named slots like: mykey-top-slot, mykey-bottom-slot -->                     
-            <div slot="nested-selections-mselect-top-slot" class="card green white-text">Named Slot at Top Position</div>       
-            <div slot="nested-selections-mselect-bottom-slot" class="card green white-text">Named Slot at Bottom Position</div>       
-            <div slot="nested-color-bottom-slot" class="card blue white-text">Named Slot at Bottom Position</div>                 
+                           
           </form-base>
         
         </div>
@@ -120,13 +115,23 @@
         <div class="col m6 s12">          
           <p>Right Formbase (different CSS)</p>
 
-          <form-base id="another-form" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema" >
-            <div slot="email-top-slot" class="card amber white-text">Slot at TOP Position</div>       
-            <div slot="email-label-slot" class="card blue white-text">LABEL Slot: {{$store.state.schema &&  $store.state.schema.email.label}}</div>       
-            <div slot="email-mid-slot" class="card amber white-text">Slot at MID Position</div>       
-            <div slot="email-input-slot" class="card blue white-text"><h6>INPUT Replacing Slot</h6></div>       
-            <div slot="email-bottom-slot" class="card amber white-text">Slot at BOTTOM Position</div>       
-            <div slot="email-error-slot" class="card white red-text">ERROR Slot: {{$store.state.schema && $store.state.schema.email.error}}</div>       
+          <form-base id="right-form-base" :data="data" :schema="schema" data-state-name="data" schema-state-name="schema" >
+            <!--demo use of key named slots like: key-top-slot, key-bottom-slot -->
+            <div slot="email-pre-slot" class="card blue white-text">key-pre-slot Item </div>       
+            <div slot="email-top-slot" class="card amber white-text">key-top-slot Position</div>       
+            <div slot="email-label-slot" class="card blue white-text">key-label-slot {{$store.state.schema &&  $store.state.schema.email.label}}</div>       
+            <div slot="email-mid-slot" class="card amber white-text">key-mid-slot Position</div>       
+            <div slot="email-input-slot" class="card blue white-text">key-input-slot replacing 
+              <p class="white blue-text">{{ $store.state.data && $store.state.data.email}}</p>
+            </div>       
+            <div slot="email-bottom-slot" class="card amber white-text">key-bottom-slot Position</div>       
+            <div slot="email-post-slot" class="card blue white-text">key-post-slot Item</div>       
+            <div slot="email-error-slot" class="card white red-text">Slot@Error:{{$store.state.schema && $store.state.schema.email.error}}</div>     
+           
+            <!--use nested key named slots like: mykey-top-slot, mykey-bottom-slot -->                     
+            <div slot="nested-selections-mselect-top-slot" class="card blue white-text">Named Slot at Top Position</div>       
+            <div slot="nested-selections-mselect-bottom-slot" class="card blue white-text">Named Slot at Bottom Position</div>       
+            
           </form-base>
         
         </div>             
@@ -137,7 +142,8 @@
 
 
 <script>
-  import FormBase from './components/formBase.vue'
+  import FormBase from './components/FormBase.vue' // use local copy  
+  // import FormBase from 'vue-form-base'  // use node_modules
   import { cloneDeep, isString, isArray } from 'lodash'
 
   export default {
@@ -146,33 +152,37 @@
       return {  
     
         data:{
+
+          title: 'MD',
+          prename:'Dahlia',          
+          lastname: "Wynestone",
+          
           user: "smith",
           password: '12345',
           email:'smith@online.com',          
+          
           nested:{
             checkbox: 'untouched',
             radio: 'Yoga', 
             color: '#bcdf2f',
+          
             selections: {
-              select: 'Resilience',
-              mselect: ['Yoga', 'Resilience'],
+              select: 'Resilience',             // preselected
+              mselect: ['Yoga', 'Resilience'],  // preselected 
             },
+          
           },
-          fileselector:'green-tea.jpg',
 
-          user1: "wally",
-          email1:'wally@online.com',          
-          password1: '12345',
+          fileselector:'green-tea.jpg',
 
         },
 
         schema:{    
-          // Schema Definition and available Properties
-          /* 
-            // recommended info https://www.wufoo.com/html5/
+          /*  Schema Definition and available Properties
+              recommended info https://www.wufoo.com/html5/
 
-            schema:{ 
-                order: number,          // controls order of displaying 
+              schema:{ 
+                order: number,          // controls order of displaying items 
                 
                 type: string,           // ['text', 'list', 'password', 'email', 'url', 'select', 'multiselect', 'file', 'radio', 'checkbox', 'number', 'range', 'date', 'time', 'week', 'month'] 
                 label: string,          // title of item    
@@ -180,16 +190,21 @@
                 true: string,           // text if checkbox is checked  
                 false: string,          // text if checkbox is unchecked 
                 accept: string,         // only in type:'file' limit to accepted files -  audio/*, video/*, image/*, image/gif, .pdf, .doc  
+                
                 title: string,          // optional define your own validation message
                 error: string,          // preset/set inline error msg
-                css: string             // inject at item level one or more classes
-
+                
+                css: string,            // inject one or more classnames at item level, 
+                // Use GRID 12 column system from materializecss.com/grid.html for displaying items
+                // for example a 12 column grid with responsive display would look like:
+                // schema:{ item1:{ css:'col l4 m6 s12'}, item2:{ css:'col l4 m6 s12'}, item3:{ css:'next-row col l4 m6 s12'} }
+    
                 min: number,            // limit number or range
                 max: number,            // limit number or range
                 step: number,        
-                maxlength: number,      // max length opf type text/email 
+                maxlength: number,      // max length of type text/email 
                 
-                pattern: regexString,
+                pattern: regexString,   // control allowed text input via regex
 
                 multiple: bool,         // use with type:'file' select one or more files   
                 required: bool, 
@@ -206,69 +221,63 @@
                 mapSet: function,       function( value, obj, state, schema ) { value, obj.key, obj.value, obj.schema ->  IMPORTANT! Always return outgoing mapped value }
                 
                 // Validation 
-                validate: true          // use inline error message
-                validate: function,     function( validationMessage, obj, state, schema, validity ) { use validationMessage state to log or display validation message  }              
-                noValidate: function,     function( value, obj, state, schema ) { use value, obj.key, obj.value, obj.schema to handle novalidation }
-            }                    
+                validate: undefined     // no validation
+                validate: true          // use inline error message or 
+                validate: function,     function( validationMessage, obj, state, schema, validity ) { use validationMessage state to log or display validation message  } 
+                // No Validation               
+                noValidate: function,   function( value, obj, state, schema ) { use value, obj.key, obj.value, obj.schema to handle novalidation }
+              }  
+
           */ 
         
-          user: { 
-            type:'text', 
-            label:`User (Try 'hide' to hide password, Value is required)`,
-            validate:true,
-            required:true, 
-            // mapGet: v => v.toUpperCase(),
-            mapSet: (val, obj, data, schema) => { schema.password.hidden = val.toUpperCase() === 'HIDE'; return val}, 
-            css:'col l3 m6 s12',
-            
+          // Responsive 12 Column Grid - http://materializecss.com/grid.html 
+          // finish columns with class 'next-row' -{... css:'next-row col s4' ...}  
+          title:{
+            type:'text', label:'Title', css:'col l2 m2 s2'
           },
-
-          password:{
-            type:'password', 
-             label:'Password [0-9], invalidate with own CSS & logs error to console and to user field )', 
-            required:true, 
-            pattern:'[0-9]*',
+          prename:{
+            type:'text', label:'Firstname', required:true, css:'col l4 m4 s10'
+          },
+          lastname:{
+            type:'text', label:'Lastname', required:true, css:'next-row col l4 m6 s12'
+          },
+          
+          user: { 
+            type:'text', label:`Type 'hide', value required`, validate:true, required:true,
+            // mapGet: v => v.toUpperCase(),
+            mapSet: (val, obj, data, schema) => { schema.email.hidden = val.toUpperCase() === 'HIDE'; return val}, 
+            css:'col l3 m6 s12',            
+          },
+          password:{ 
+            type:'password', label:'Password [0-9], custom invalidate', required:true, pattern:'[0-9]*', css:'col l3 m6 s12',          
+            validate:(msg, obj, data, schema, validity) => { console.warn(msg); obj.schema.error = `Customized Error: ${msg}`; schema.user.error ="Invalid Password for this User" }, 
+            noValidate:(val, obj, data, schema) => { schema.user.error = null; obj.schema.error = null  }, 
             // validate undefined   // no validation 
             // validate:true,       // show inline error message          
             // validate:(msg) => console.warn(msg), 
-            validate:(msg, obj, data, schema, validity) => { console.warn(msg); obj.schema.error = `CUSTOM ERROR: ${msg}`; schema.user.error ="Wrong Password for this User" }, 
-            noValidate:(val, obj, data, schema) => { schema.user.error = null; obj.schema.error = null  }, 
-            css:'col l3 m6 s12',
           },        
-
-          email: {type:'email',label:'Email (Grid:l3 m6 s12)', validate:true, css: 'yellow lighten-4 col l3 m6 s12' }, 
+          email: {
+            type:'email',label:'Email, custom css', validate:true, css: 'yellow lighten-4 next-row col l6 m12 s12' 
+          }, 
         
           nested:{
-            checkbox: { type:'checkbox', true:'Yes!', false:'Oh No!', css: 'next-row col l3 m6 s12' },
-            radio: { type:'radio', hidden:false, options:['Resilience','Green Tea','Yoga','Curry'], css: 'col s6' }, 
-            color:{ type:'color', css: 'next-row col s6' }, 
+            
+            checkbox: { type:'checkbox', true:'Yes!', false:'Oh No!', css: 'col s4' },
+            radio: { type:'radio', hidden:false, options:['Resilience','Green Tea','Yoga','Curry'], css: 'col s4' }, 
+            color:{ type:'color', css: 'next-row col s4' }, 
+          
             selections: {
               select: { type:'select', label:'Select One', options:['Resilience','Green Tea','Yoga','Curry']},
               mselect: { type:'multiselect', label:'Select Some', required:true,  validate:true, options:['Resilience','Green Tea','Yoga','Curry']},
             }, 
+          
           },
 
-          fileselector:{ type:'file', multiple:true, label:'Get Teas!' }  ,
-
-          // use grid for displaying items
-          // 12 column grid with 3 items in one row -> schema:{ item1:{ css:'col s4' }, item2:{ css:'col s4' } , item3:{ css:'next-row col s4' } }
-
-          // use http://materializecss.com/grid.html  12 column - grid system:   css:'col s4'  
-          user1:{type:'text', label:'User Grid', css:'col l4 m6 s12'},
-          // use http://materializecss.com/grid.html  12 column - grid system:   css:'col s4'  
-          email1:{type:'email', label:'Email Grid', css:'col l4 m6 s12'},
-          // use http://materializecss.com/grid.html  12 column - grid system:   css:'next-row col s4'  - finish columns with next-row   
-          password1:{type:'password', label:'PW Grid: col l4 m6 s12 ', css:'next-row col l4 m6 s12'},
-
+          fileselector:{ 
+            type:'file', multiple:true, label:'Drag/Select Files!' 
+          },
+        
         },
-
-      }
-    },
-
-
-    computed:{
-      validFormular(){
-        return 
       }
     },
 
@@ -281,7 +290,9 @@
 
     },
 
-    components: { FormBase },
+    components: { 
+      FormBase 
+    },
 
   }
 </script>

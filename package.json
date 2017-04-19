@@ -1,7 +1,7 @@
 {
   "name": "vue-form-base",
   "version": "0.0.3",
-  "description": "form-generator Vue 2.0 component using Vuex for reactive result",
+  "description": "Form-Generator: a Vue 2.0 component, reactive Result using Vuex, responsive Display",
   "main": "FormBase.vue",
   "scripts": {
     "test": "npm run unit"
@@ -16,11 +16,14 @@
     "vuex",
     "formular",
     "generator",
+    "json",
     "schema",
+    "responsive",
+    "reactive",
     "select",
     "multiselect"
   ],
-  "author": "wotamann@gmx.at",
+  "author": "woko@aon.at",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/wotamann/vue-form-base/issues"
