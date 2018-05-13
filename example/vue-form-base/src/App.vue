@@ -38,10 +38,10 @@
     // KEY specific classes -----------------------------------------------------------------------------
     // here you have direct access to each key in your data-object
     #form-base .item.lastname-key,
-    #form-base .item.user-adress-city-key, // deep nested key
+    #form-base .item.user-address-city-key, // deep nested key
 
     // make invalid css for individual key
-    #form-base .item.adress-city-key input:invalid{ background-color: #fda; }
+    #form-base .item.address-city-key input:invalid{ background-color: #fda; }
     #form-base .item.lastname-key input:focus{ background-color: #ff9; }          
     
     

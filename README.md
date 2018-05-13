@@ -92,7 +92,7 @@ Your Data to edit:
       email:'smith', 
       password: '12345ABCDEF',
 	  remember: 'undefined',
-      adress:{ 
+      address:{ 
         city:'NY',
 		 
       } 
@@ -116,7 +116,7 @@ Create a Schema Object:
 		
 		remember: {type:'checkbox', label:'Remember Me:', true:'Yes', false:'No' }, 	
 		
-		adress:{ 
+		address:{ 
 			city:{ type:'text', mapSet: v => v && v.toUpperCase() }
   		} 
     }
@@ -389,11 +389,11 @@ If you want to style select or multiselect types you have append `select` after 
 
   Here you get direct access to each key in your Data-Object. If you want access deep nested keys youst must use a hyphen 
 
-	data{ user:{ adress:{ city:'',... } ... } ... }
+	data{ user:{ address:{ city:'',... } ... } ... }
  
 access deep nested key 'city' with CSS
 
-	  #form-base .item.user-adress-city-key {...}    
+	  #form-base .item.user-address-city-key {...}    
 
     
 
