@@ -214,7 +214,7 @@
       },
 
       getKeyClassNameWithAppendix(obj, appendix){
-        // get KEY specific name by replacing '.' with '-' and appending '-top-slot'  -> 'adress-city-top-slot'
+        // get KEY specific name by replacing '.' with '-' and appending '-top-slot'  -> 'address-city-top-slot'
         return this.redoMakeKeyUnique(obj.key).replace(/\./g,'-') + appendix
       },
 
@@ -233,27 +233,27 @@
       // slot identifier  replace label, error, input 
 
         getTopSlot(obj){
-          // get KEY specific name by replacing '.' with '-' and appending '-top-slot'  -> 'adress-city-top-slot' 
+          // get KEY specific name by replacing '.' with '-' and appending '-top-slot'  -> 'address-city-top-slot' 
           return this.getKeyClassNameWithAppendix(obj, topSlotAppendix)
         },
         getLabelSlot(obj){
-          // get KEY specific name by replacing '.' with '-' and appending '-label-slot'  -> 'adress-city-label-slot' 
+          // get KEY specific name by replacing '.' with '-' and appending '-label-slot'  -> 'address-city-label-slot' 
           return this.getKeyClassNameWithAppendix(obj, labelSlotAppendix)
         },
         getMidSlot(obj){
-          // get KEY specific name by replacing '.' with '-' and appending '-top-slot'  -> 'adress-city-top-slot' 
+          // get KEY specific name by replacing '.' with '-' and appending '-top-slot'  -> 'address-city-top-slot' 
           return this.getKeyClassNameWithAppendix(obj, midSlotAppendix)
         },
         getInputSlot(obj){
-          // get KEY specific name by replacing '.' with '-' and appending '-input-slot'  -> 'adress-city-input-slot' 
+          // get KEY specific name by replacing '.' with '-' and appending '-input-slot'  -> 'address-city-input-slot' 
           return this.getKeyClassNameWithAppendix(obj, inputSlotAppendix)
         },        
         getBottomSlot(obj){
-          // get KEY specific name by replacing '.' with '-' and appending '-bottom-slot'  -> 'adress-city-bottom-slot' 
+          // get KEY specific name by replacing '.' with '-' and appending '-bottom-slot'  -> 'address-city-bottom-slot' 
           return this.getKeyClassNameWithAppendix(obj, bottomSlotAppendix)
         },
         getErrorSlot(obj){
-          // get KEY specific name by replacing '.' with '-' and appending '-error-slot'  -> 'adress-city-error-slot' 
+          // get KEY specific name by replacing '.' with '-' and appending '-error-slot'  -> 'address-city-error-slot' 
           return this.getKeyClassNameWithAppendix(obj, errorSlotAppendix)
         },
         
@@ -266,7 +266,7 @@
           return obj.schema.css && obj.schema.css.indexOf(nextRowName) > -1 ? nextRowClass : '';
         },
         getKeyClassName(obj){
-          // get KEY specific class name by replacing '.' with '-' and appending '-key'  -> 'adress-city-key' 
+          // get KEY specific class name by replacing '.' with '-' and appending '-key'  -> 'address-city-key' 
           return this.getKeyClassNameWithAppendix(obj, keyClassAppendix)
         },
         getTypeClassName(obj){        
@@ -280,7 +280,7 @@
         },
 
         getItemClassName(obj){
-          // each item gets a class 'item', a class 'item-type' like 'checkbox-type', a class 'item-key' like 'adress-city-key' and a class from schema.css      
+          // each item gets a class 'item', a class 'item-type' like 'checkbox-type', a class 'item-key' like 'address-city-key' and a class from schema.css      
           // console.log(`item ${this.getTypeClassName(obj)} ${this.getKeyClassName(obj)} ${this.getCssClassName(obj)}`)
           return `item ${this.getTypeClassName(obj)} ${this.getKeyClassName(obj)} ${this.getCssClassName(obj)}`
         },     
@@ -362,7 +362,7 @@
       },
 
       getObjectValueByPath(object, path){
-        // resolves chained keys (like 'user.adress.street') on an object and returns the value 
+        // resolves chained keys (like 'user.address.street') on an object and returns the value 
         let pathArray=path.split(pathDelimiter)
         let value
         pathArray.forEach((p, ix) => {
@@ -374,7 +374,7 @@
       },
 
       setObjectByPath(object, path, value) {
-        // resolves chained keys (like 'user.adress.street') on an object and set the value 
+        // resolves chained keys (like 'user.address.street') on an object and set the value 
         let pathArray=path.split(pathDelimiter)
         pathArray.forEach((p, ix) => {
           if(ix === pathArray.length -1 ) object[p] = value
