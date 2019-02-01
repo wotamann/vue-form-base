@@ -2,6 +2,8 @@
 Vue-Form-Base
 ===
 
+### DEPRECATED see next Version:  vuetify-form-base
+
 Vue-Form-Base is a Vue 2.0 Component and Form-Generator for editing plain or deep nested Javascript objects getting a reactive Result. 
 
 You have to create a lot of different forms? **Vue-Form-Base** can simplify your job by creating forms from JS-Objects.   
